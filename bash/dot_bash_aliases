@@ -1,0 +1,1 @@
+alias install_go_18="~/bin/gimme 1.8 && . ~/.gimme/envs/go1.8.env"
