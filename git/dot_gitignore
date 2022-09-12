@@ -1,0 +1,46 @@
+
+*.o
+*.a
+*.plg
+#*.mod
+*.so
+*.bak
+*.pyc
+*.plc
+#scons files 
+#.sconsign.dblite
+
+#cscope files
+cscope.out
+
+#sasn binary outputs
+*.rpm
+*.dist
+
+#build directory
+build/
+linux_x86_64
+
+#documentation directory
+#doc/
+#latex/
+#html/
+#some files generated
+#*.png
+#*.md5
+#*.map
+
+#netbeans project folder
+nbproject/
+
+#idea project
+.idea/
+
+#files from merge and rebase
+*.orig
+
+#vscode
+.vscode/
+
+#vscode local history extension
+.history/
