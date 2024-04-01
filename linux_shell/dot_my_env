@@ -1,0 +1,20 @@
+# change prompt
+if [ -f "$HOME/bin/nerdps1" ]; then
+  . "$HOME/bin/nerdps1"
+fi
+
+# Set bash environment needs
+# note: yes, this should go in .bashrc
+# but .profile executes .bashrc BEFORE
+# the PATH is changed so some tools
+# like `zoxide` are not found.
+# I could change the order but as I do NOT
+# want to mess with configuration I prefer
+# to keep this here.
+if [ -n "$BASH_VERSION" ]; then
+  eval "$(zoxide init --cmd cd bash)"
+fi
+#####
+# Set go version
+####
+eval "$(GIMME_GO_VERSION=1.22.1 gimme)" > /dev/null 2>&1
