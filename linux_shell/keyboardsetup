@@ -1,1 +1,3 @@
 setxkbmap -layout us -variant altgr-intl -option ctrl:swapcaps
+# altgr international + swap LCtrl and Caps + swap Left Alt and Super
+setxkbmap -layout us -variant altgr-intl -option ctrl:swapcaps -option altwin:swap_lalt_lwin
