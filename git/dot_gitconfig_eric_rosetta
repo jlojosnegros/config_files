@@ -1,0 +1,12 @@
+[user]
+  name = eojojos
+  email = jose.luis.ojosnegros.manchon@ericsson.com
+[http]
+	sslCert = /home/eojojos/.devops/client.pem
+	sslKey = /home/eojojos/.devops/client-key.pem
+
+[core]
+  sshCommand = ssh -i ~/.ssh/id_ed25519_eojojos
+
+[credential]
+  helper = store --file ~/.devops/.git-credentials

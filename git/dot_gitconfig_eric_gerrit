@@ -1,0 +1,6 @@
+[user]
+  name = eojojos
+  email = jose.luis.ojosnegros.manchon@ericsson.com
+
+[core]
+  sshCommand = ssh -i ~/.ssh/id_rsa_eojojos_gerrit

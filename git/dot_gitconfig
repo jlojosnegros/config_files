@@ -1,6 +1,3 @@
-[user]
-  name = Jose Luis Ojosnegros Manchón
-  email = jl.ojosnegros.manchon@gmail.com
 [alias]
   st = status
   unstage = reset HEAD
@@ -47,17 +44,29 @@
     tool = p4merge
 [difftool "p4merge"]
     cmd = "p4merge $LOCAL $REMOTE"
+# Config for gerrit urls
+#[url "git@gerrit-review.gic.ericsson.se"]
+#  insteadOf = https://gerrit-review.gic.ericsson.se
+
 #[diff]
 #	external = p4diff
 [gui]
 	fontdiff = -family \"Bitstream Vera Sans Mono\" -size 12 -weight normal -slant roman -underline 0 -overstrike 0
 	fontui = -family \"Bitstream Vera Sans Mono\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
+
 [color]
 	diff = auto
 	status = auto
 [push]
 	default = upstream
-
-
 [pull]
 	ff = only
+
+[includeIf "gitdir:~/source/eric/rosetta/"]
+  path = .gitconfig_eric_rosetta
+
+[includeIf "gitdir:~/source/mine/"]
+  path = .gitconfig_mine_github
+
+[includeIf "gitdir:~/source/eric/gerrit/"]
+  path = .gitconfig_eric_gerrit

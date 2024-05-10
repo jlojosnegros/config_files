@@ -1,0 +1,6 @@
+[user]
+  name = Jose Luis Ojosnegros Manchón
+  email = jl.ojosnegros.manchon@gmail.com
+
+[core]
+  sshCommand = ssh -i ~/.ssh/id_ed25519
