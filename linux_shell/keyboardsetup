@@ -1,3 +1,10 @@
+# reset options
+setxkbmap -option
+
+# altgr international + swap LCtrl and Caps 
 setxkbmap -layout us -variant altgr-intl -option ctrl:swapcaps
+
+# Note: this is the same as the line before but just swaps Left Alt and Super keys
+#       It is useful for some keyboards that have them missplaced.
 # altgr international + swap LCtrl and Caps + swap Left Alt and Super
-setxkbmap -layout us -variant altgr-intl -option ctrl:swapcaps -option altwin:swap_lalt_lwin
+#setxkbmap -layout us -variant altgr-intl -option ctrl:swapcaps -option altwin:swap_lalt_lwin
