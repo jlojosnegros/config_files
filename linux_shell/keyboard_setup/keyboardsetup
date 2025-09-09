@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAYOUT="us"
+VARIANT="altgr-intl"
+OPTIONS="ctrl:swapcaps"
+
+case "${XDG_SESSION_TYPE:-}" in
+  x11)
+    # Classic X11: your original command
+    setxkbmap -option
+    setxkbmap -layout "$LAYOUT" -variant "$VARIANT" -option "$OPTIONS"
+    ;;
+  wayland)
+    # Detect GNOME (Fedora default)
+    if printf '%s' "${XDG_CURRENT_DESKTOP:-}${XDG_SESSION_DESKTOP:-}" | grep -qi gnome; then
+      gsettings set org.gnome.desktop.input-sources sources "[('xkb','${LAYOUT}+${VARIANT}')]"
+      gsettings set org.gnome.desktop.input-sources xkb-options "['${OPTIONS}']"
+    else
+      echo "Wayland session detected (non-GNOME)."
+      echo "Set your keymap via your compositor's config (e.g., sway/Hyprland),"
+      echo "or use the system default for X11/TTY:"
+      sudo localectl set-x11-keymap "$LAYOUT" "" "$VARIANT" "$OPTIONS"
+    fi
+    ;;
+  *)
+    echo "Unknown session type; applying X11/TTY defaults."
+    sudo localectl set-x11-keymap "$LAYOUT" "" "$VARIANT" "$OPTIONS"
+    ;;
+esac
+
