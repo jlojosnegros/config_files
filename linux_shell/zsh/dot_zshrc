@@ -39,5 +39,9 @@ zinit light-mode for \
     romkatv/powerlevel10k \
     Aloxaf/fzf-tab
 
+zinit snippet OMZP::git
+zinit snippet OMZP::sudo
+zinit snippet OMZP::command-not-found
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
