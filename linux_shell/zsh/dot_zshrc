@@ -36,8 +36,15 @@ zinit light-mode for \
     zsh-users/zsh-syntax-highlighting \
     zsh-users/zsh-completions \
     zsh-users/zsh-autosuggestions \
-    romkatv/powerlevel10k \
-    Aloxaf/fzf-tab
+    romkatv/powerlevel10k 
+
+#############################################################
+# fzf-tab need to be installed on its own otherwise it crash
+#############################################################
+zinit ice proto=ssh
+zinit load Aloxaf/fzf-tab
+autoload -Uz compinit
+compinit -u
 
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo
