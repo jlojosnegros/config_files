@@ -36,7 +36,8 @@ zinit light-mode for \
     zsh-users/zsh-syntax-highlighting \
     zsh-users/zsh-completions \
     zsh-users/zsh-autosuggestions \
-    romkatv/powerlevel10k
+    romkatv/powerlevel10k \
+    Aloxaf/fzf-tab
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
