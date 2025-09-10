@@ -91,3 +91,7 @@ zstyle 'completion:*' list-colors "${(s.:.)LS_COLORS}"             # use LS_COLO
 zstyle 'completion:*' menu no                                      # Disable completion menu
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath' # Preview directory contents with fzf
 
+
+
+# ZOXIDE Configuration (this should be at the END of the file)
+eval "$(zoxide init zsh)"
