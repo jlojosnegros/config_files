@@ -69,3 +69,17 @@ export FCEDIT=nvim               # Fix file change editor
 #export TERMINAL=alacritty        # set the default terminal emulator
 #export BROWSER=com.brave.Browser # Set the default web browser
 
+###############################################################################
+# History Configuration
+###############################################################################
+HISTSIZE=10000                  # Max number of history entries
+HISTFILE=~/.zsh_history         # Location of the history file
+SAVEHIST=$HISTSIZE              # Number of commands to save
+HISTDUP=erase                   # Avoid duplicate entries
+setopt appendhistory            # Append history instead of overwritting
+setopt sharehistory             # Share history across terminals
+setopt hist_ignore_space        # Ignore commands starting with a space 
+setopt hist_ignore_all_dups     # Ignore duplicate entries across sessions
+setopt hist_save_no_dups        # Avoid saving duplicates in history
+setopt hist_find_no_dups        # Prevent duplicates in history searches
+
