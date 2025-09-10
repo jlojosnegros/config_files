@@ -83,3 +83,11 @@ setopt hist_ignore_all_dups     # Ignore duplicate entries across sessions
 setopt hist_save_no_dups        # Avoid saving duplicates in history
 setopt hist_find_no_dups        # Prevent duplicates in history searches
 
+###############################################################################
+# Completion Styling
+###############################################################################
+zstyle 'completion:*' matcher-list 'm:{a-z}={A-Z}'                 # case insensitive matching
+zstyle 'completion:*' list-colors "${(s.:.)LS_COLORS}"             # use LS_COLORS for file colors
+zstyle 'completion:*' menu no                                      # Disable completion menu
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath' # Preview directory contents with fzf
+
