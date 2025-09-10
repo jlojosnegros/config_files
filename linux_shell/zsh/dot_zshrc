@@ -59,3 +59,13 @@ setopt notify                    # report the status of background jobs immediat
 setopt numericglobsort           # sort filenames numerically when it makes sense
 #setopt pomptsubst                # enable command substitution in prompt
 
+###############################################################################
+# Environment Variables
+###############################################################################
+export EDITOR=nvim visudo        # Set nvim as the default editor for sudo visudo
+export VISUAL=nvim visudo        # Set nvim as the default visual editor
+export SUDO_EDITOR=nvim          # Sudo specific editor
+export FCEDIT=nvim               # Fix file change editor
+#export TERMINAL=alacritty        # set the default terminal emulator
+#export BROWSER=com.brave.Browser # Set the default web browser
+
