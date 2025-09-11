@@ -1,3 +1,8 @@
+
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -106,3 +111,14 @@ eval "$(GIMME_GO_VERSION=1.25.1 gimme)" > /dev/null 2>&1
 
 # ZOXIDE Configuration (this should be at the END of the file)
 eval "$(zoxide init zsh)"
+
+# Sólo en zsh (interactivo) y dentro de tmux, usa keymap emacs
+if [[ -n "$TMUX" ]]; then
+  bindkey -e
+fi
+
+# Asegurar C-n / C-p en cualquier caso
+bindkey '^N' down-history
+bindkey '^P' up-history
+
+
