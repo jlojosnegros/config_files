@@ -110,7 +110,7 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath' # Preview dir
 eval "$(GIMME_GO_VERSION=1.25.1 gimme)" > /dev/null 2>&1
 
 # ZOXIDE Configuration (this should be at the END of the file)
-eval "$(zoxide init zsh)"
+eval "$(zoxide init zsh --cmd cd)"
 
 # Sólo en zsh (interactivo) y dentro de tmux, usa keymap emacs
 if [[ -n "$TMUX" ]]; then
