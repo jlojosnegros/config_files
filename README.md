@@ -32,3 +32,23 @@ stow -n -v
 
 - `-n` no hacer cambios --> Este ayuda para ver lo que va a hacer ( junto con -v) antes de hacerlo
 - `-v` verbose  --> Este es bueno añadirlo siempre
+
+
+
+### Guia rápida para configurar y borrar
+OJO: es importante quedarse con los comandos de stow que se hacen para luego poder deshacerlos cuando sea necesario
+#### Creacion
+```shell
+❯ stow -v -d /home/jojosneg/source/mine/config_files/ -t /home/jojosneg/.config/nvim nvim
+❯ stow -v -d /home/jojosneg/source/mine/config_files/ -t /home/jojosneg/.config/tmux tmux
+❯ stow -v -d /home/jojosneg/source/mine/config_files/linux_shell -t /home/jojosneg zsh
+❯ stow -v -d /home/jojosneg/source/mine/config_files -t /home/jojosneg git
+```
+
+#### Borrado
+```shell
+❯ stow -v -d /home/jojosneg/source/mine/config_files/ -t /home/jojosneg/.config/nvim -D nvim
+❯ stow -v -d /home/jojosneg/source/mine/config_files/ -t /home/jojosneg/.config/tmux -D tmux
+❯ stow -v -d /home/jojosneg/source/mine/config_files/linux_shell -t /home/jojosneg -D zsh
+❯ stow -v -d /home/jojosneg/source/mine/config_files -t /home/jojosneg -D git
+```
