@@ -3,4 +3,4 @@
   email = jl.ojosnegros.manchon@gmail.com
 
 [core]
-  sshCommand = ssh -i ~/.ssh/id_ed25519
+  sshCommand = ssh -i ~/.ssh/jlojosnegros_github
