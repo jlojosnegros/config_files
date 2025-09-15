@@ -26,12 +26,12 @@
   track = "!f() { ( git for-each-ref --format=\"local: %(refname:short) <--sync--> remote: %(upstream:short)\" refs/heads && echo --Remotes && git remote -v); }; f"
   
 # Show files ignored by git:
-#     ign = ls-files -o -i --exclude-standard
-#
+     ign = ls-files -o -i --exclude-standard
+
 [core]
 	excludesfile = /home/jojosneg/.gitignore
 	pager = less -FXRS
-	editor = vim
+	editor = nvim
 [merge]
 	keepBackup = false;
 	tool = p4merge
@@ -44,12 +44,6 @@
     tool = p4merge
 [difftool "p4merge"]
     cmd = "p4merge $LOCAL $REMOTE"
-# Config for gerrit urls
-#[url "git@gerrit-review.gic.ericsson.se"]
-#  insteadOf = https://gerrit-review.gic.ericsson.se
-
-#[diff]
-#	external = p4diff
 [gui]
 	fontdiff = -family \"Bitstream Vera Sans Mono\" -size 12 -weight normal -slant roman -underline 0 -overstrike 0
 	fontui = -family \"Bitstream Vera Sans Mono\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
@@ -62,11 +56,11 @@
 [pull]
 	ff = only
 
-[includeIf "gitdir:~/source/eric/rosetta/"]
-  path = .gitconfig_eric_rosetta
+[includeIf "gitdir:~/source/redhat/"]
+  path = .gitconfig_redhat
 
 [includeIf "gitdir:~/source/mine/"]
   path = .gitconfig_mine_github
 
-[includeIf "gitdir:~/source/eric/gerrit/"]
-  path = .gitconfig_eric_gerrit
+[includeIf "gitdir:~/.local/"]
+  path = .gitconfig_mine_github
