@@ -121,4 +121,7 @@ fi
 bindkey '^N' down-history
 bindkey '^P' up-history
 
-
+#################
+# ALIASES
+################
+alias cat=bat
