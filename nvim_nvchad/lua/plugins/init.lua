@@ -1,17 +1,23 @@
 return {
-  {
-    "stevearc/conform.nvim",
-    -- event = 'BufWritePre', -- uncomment for format on save
-    opts = require "configs.conform",
-  },
+    -- Importa tus specs separados
+  { import = "plugins.lsp" },
+  { import = "plugins.format-lint-dap" },
+  -- start: this was uncomment
+  -- {
+  --   "stevearc/conform.nvim",
+  --   -- event = 'BufWritePre', -- uncomment for format on save
+  --   opts = require "configs.conform",
+  -- },
 
-  -- These are some examples, uncomment them if you want to see them work!
-  {
-    "neovim/nvim-lspconfig",
-    config = function()
-      require "configs.lspconfig"
-    end,
-  },
+  -- -- These are some examples, uncomment them if you want to see them work!
+  -- {
+  --   "neovim/nvim-lspconfig",
+  --   config = function()
+  --     require "configs.lspconfig"
+  --   end,
+  -- },
+
+  -- end: this was uncomment
 
   -- test new blink
   -- { import = "nvchad.blink.lazyspec" },
