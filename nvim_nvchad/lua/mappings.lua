@@ -50,9 +50,9 @@ map("n", "<leader>sc", tb("commands"),     opt("Comandos"))
 map("n", "<leader>sd", tb("diagnostics", { bufnr = 0 }), opt("Diag. del buffer"))
 map("n", "<leader>sD", tb("diagnostics"),               opt("Diag. del workspace"))
 -- LSP pickers útiles (si hay servidor activo):
-map("n", "<leader>sr", tb("lsp_references"),         opt("LSP Referencias"))
-map("n", "<leader>ss", tb("lsp_document_symbols"),   opt("Símbolos del buffer"))
-map("n", "<leader>sS", tb("lsp_workspace_symbols"),  opt("Símbolos del workspace"))
+map("n", "<leader>sr", tb("lsp_references"),        opt("LSP Referencias"))
+map("n", "<leader>ss", tb("lsp_document_symbols"),  opt("Símbolos del buffer"))
+map("n", "<leader>sS", tb("lsp_workspace_symbols"), opt("Símbolos del workspace"))
 
 -- ========= Git (Telescope + Gitsigns) =========
 map("n", "<leader>gs", tb("git_status"),   opt("Git status (Telescope)"))
@@ -103,14 +103,82 @@ map("n", "gr", vim.lsp.buf.references,      opt("LSP: Referencias"))
 map("n", "<leader>cr", vim.lsp.buf.rename,       opt("LSP: Rename"))
 map("n", "<leader>ca", vim.lsp.buf.code_action,  opt("LSP: Code action"))
 
--- Formato (Conform) - buffer completo
+-- Formato (Conform) - buffer completo (modo normal)
 map("n", "<leader>cf", function()
   local ok, conform = pcall(require, "conform")
   if not ok then return vim.notify("conform.nvim no cargado", vim.log.levels.WARN) end
   conform.format({ lsp_fallback = true, async = false, timeout_ms = 2000 })
 end, opt("Formatear buffer"))
 
--- === NUEVO: Toggles para format-on-save controlados por Conform (sin autocmd propio) ===
+-- === Formato de selección robusto (visual) =====================
+local function format_visual_range()
+  -- Obtiene marcas de selección visual
+  local s = vim.fn.getpos("'<") -- {bufnum, lnum, col, off}
+  local e = vim.fn.getpos("'>")
+
+  local s_line = math.max(s[2] - 1, 0)
+  local s_char = math.max(s[3] - 1, 0)
+  local e_line = math.max(e[2] - 1, 0)
+  local e_char = math.max(e[3] - 1, 0)
+
+  -- Selección invertida -> normalizar
+  if (e_line < s_line) or (e_line == s_line and e_char < s_char) then
+    s_line, e_line = e_line, s_line
+    s_char, e_char = e_char, s_char
+  end
+
+  -- Detecta modo visual para ajustar columnas
+  local vmode = vim.fn.visualmode()  -- 'v' (car), 'V' (línea), or Ctrl-V (bloque)
+  if vmode == "V" or vmode == "\022" then
+    -- En selección por líneas o bloque, formatea líneas completas
+    s_char = 0
+    e_char = 1e9
+  else
+    -- Asegurar que las columnas están dentro del rango de la línea
+    local buf = 0
+    local s_txt = vim.api.nvim_buf_get_lines(buf, s_line, s_line + 1, true)[1] or ""
+    local e_txt = vim.api.nvim_buf_get_lines(buf, e_line, e_line + 1, true)[1] or ""
+    local s_max = math.max(vim.fn.strchars(s_txt), 0)
+    local e_max = math.max(vim.fn.strchars(e_txt), 0)
+    if s_char > s_max then s_char = s_max end
+    if e_char > e_max then e_char = e_max end
+  end
+
+  local range_tbl = {
+    start = { line = s_line, character = s_char },
+    ["end"] = { line = e_line, character = e_char },
+  }
+
+  -- 1) Intenta Conform con rango
+  local ok_conform, conform = pcall(require, "conform")
+  if ok_conform then
+    local ok_run, err = pcall(function()
+      conform.format({
+        lsp_fallback = true,
+        timeout_ms = 2000,
+        range = range_tbl,
+      })
+    end)
+    if ok_run then return end
+    -- Si Conform falló por rango, cae a LSP
+    vim.notify("Conform (rango) falló, usando LSP: " .. tostring(err), vim.log.levels.DEBUG)
+  end
+
+  -- 2) Fallback a LSP range-format
+  local ok_lsp = pcall(vim.lsp.buf.format, {
+    timeout_ms = 2000,
+    range = range_tbl,
+  })
+  if not ok_lsp then
+    vim.notify("No se pudo formatear el rango (Conform y LSP fallaron)", vim.log.levels.WARN)
+  end
+end
+
+-- Visual mode: <leader>cf -> formatear solo la selección
+vim.keymap.set("v", "<leader>cf", format_visual_range, { silent = true, desc = "Formatear selección" })
+
+
+-- === Toggles para format-on-save (Conform respeta estos flags en su opts.format_on_save) ===
 map("n", "<leader>cF", function()
   vim.b.disable_autoformat = not vim.b.disable_autoformat
   vim.notify("Format on save (buffer): " .. (vim.b.disable_autoformat and "OFF" or "ON"))
@@ -120,10 +188,6 @@ map("n", "<leader>cG", function()
   vim.g.disable_autoformat = not vim.g.disable_autoformat
   vim.notify("Format on save (global): " .. (vim.g.disable_autoformat and "OFF" or "ON"))
 end, opt("Toggle format on save (global)"))
-
--- (IMPORTANTE) Eliminado el autocmd BufWritePre manual: Conform ya respeta los flags anteriores
--- Asegúrate de que en tu spec de Conform 'opts.format_on_save' sea una función que compruebe:
---   if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
 
 -- Lint (nvim-lint)
 map("n", "<leader>cl", function()
@@ -141,13 +205,11 @@ map("n", "[d", vim.diagnostic.goto_prev, opt("Diagnóstico anterior"))
 map("n", "<leader>cd", vim.diagnostic.open_float, opt("Mensajes de la línea"))
 
 -- ========= DAP (ya tienes F5/F10/F11/F12 + <leader>db / <leader>du) =========
--- Añadimos algunos atajos complementarios:
 map("n", "<leader>dr", function() require("dap").repl.toggle() end, opt("DAP: Toggle REPL"))
 map("n", "<leader>dk", function() require("dap").up() end,       opt("DAP: Stack up"))
 map("n", "<leader>dj", function() require("dap").down() end,     opt("DAP: Stack down"))
 
 -- ==== extras que tenías al final ====
-local map = vim.keymap.set
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
