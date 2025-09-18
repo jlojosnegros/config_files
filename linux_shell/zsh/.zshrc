@@ -125,3 +125,4 @@ bindkey '^P' up-history
 # ALIASES
 ################
 alias cat=bat
+alias vim=nvim
