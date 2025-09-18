@@ -53,7 +53,21 @@ return {
   },
   {
     "alexander-born/bazel.nvim",
+    enabled = false,
     ft = { "bzl", "starlark", "bazel" },
     dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-lua/plenary.nvim" },
+    -- 👇 Esto se ejecuta ANTES de cargar bazel.nvim cuando se cumpla el ft,
+    -- garantizando que el provider Python3 esté habilitado y con el venv correcto.
+    init = function()
+      -- Fuerza habilitar provider (por si algún módulo lo deshabilitó antes)
+      vim.g.loaded_python3_provider = nil
+      -- Asegura la ruta del venv que ya tienes
+      vim.g.python3_host_prog = vim.fn.expand("~/.venvs/neovim/bin/python")
+
+      -- 🚫 Señal para no cargar el Vimscript heredado
+      -- Muchos plugins siguen esta convención; bazel.nvim la respeta.
+      vim.g.loaded_bazel_vim = 1
+      vim.g.loaded_bazel = 1
+    end,
   },
 }
