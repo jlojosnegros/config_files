@@ -213,3 +213,52 @@ map("n", "<leader>dj", function() require("dap").down() end,     opt("DAP: Stack
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
+
+-- ===================================================================
+-- =================== AÑADIDOS DE NAVEGACIÓN ========================
+-- ===================================================================
+
+-- which-key: añade grupos nuevos (Buffers / Jumps) SIN tocar lo anterior
+do
+  local ok, wk = pcall(require, "which-key")
+  if ok and wk.add then
+    wk.add({
+      { "<leader>b", group = "Buffers" },
+      { "<leader>j", group = "Jumps" },
+    })
+  elseif ok and wk.register then
+    wk.register({
+      b = { name = "Buffers" },
+      j = { name = "Jumps" },
+    }, { prefix = "<leader>" })
+  end
+end
+
+-- Buffers
+map("n", "<leader>bn", ":bnext<CR>",         opt("Siguiente buffer"))
+map("n", "<leader>bp", ":bprevious<CR>",     opt("Buffer anterior"))
+map("n", "<leader>bd", ":bdelete<CR>",       opt("Cerrar buffer actual"))
+map("n", "<leader>bo", ":%bd|e#|bd#<CR>",    opt("Cerrar otros buffers (deja el actual)"))
+map("n", "<leader>bb", "<C-^>",              opt("Alternar con último buffer"))
+
+-- Jumps (jumplist)
+map("n", "<leader>jb", "<C-o>",              opt("Volver (jumplist back)"))
+map("n", "<leader>jf", "<C-i>",              opt("Adelante (jumplist fwd)"))
+map("n", "<leader>jj", tb("jumplist"),       opt("Ver jumplist (Telescope)"))
+
+-- LSP con “memoria”: guarda la posición previa y luego salta
+local function with_prev_mark(fn)
+  return function(...)
+    pcall(vim.cmd, "normal! m'") -- mark ' = posición previa
+    return fn(...)
+  end
+end
+map("n", "<leader>jd", with_prev_mark(vim.lsp.buf.definition),     opt("Ir a definición (guardar vuelta)"))
+map("n", "<leader>jD", with_prev_mark(vim.lsp.buf.declaration),    opt("Ir a declaración (guardar vuelta)"))
+map("n", "<leader>ji", with_prev_mark(vim.lsp.buf.implementation), opt("Ir a implementación (guardar vuelta)"))
+map("n", "<leader>jt", with_prev_mark(vim.lsp.buf.type_definition),opt("Ir a type definition (guardar vuelta)"))
+
+-- Centrar la línea actual en la ventana (no mueve el cursor en el archivo)
+map("n", "<leader>zm", "zz",                 opt("Centrar línea (middle)"))
+map("n", "<leader>zt", "zt",                 opt("Línea arriba (top)"))
+map("n", "<leader>zb", "zb",                 opt("Línea abajo (bottom)"))
