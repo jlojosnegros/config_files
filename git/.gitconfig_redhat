@@ -1,0 +1,7 @@
+
+[user]
+  name = Jose Luis Ojosnegros Manchón
+  email = jojosneg@redhat.com
+
+[core]
+  sshCommand = ssh -i ~/.ssh/jlojosnegros_github

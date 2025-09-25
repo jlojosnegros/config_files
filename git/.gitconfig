@@ -56,6 +56,9 @@
 [pull]
 	ff = only
 
+[includeIf "gitdir:~/source/redhat/gitlab"]
+  path = .gitconfig_redhat_gitlab
+
 [includeIf "gitdir:~/source/redhat/"]
   path = .gitconfig_redhat
 
