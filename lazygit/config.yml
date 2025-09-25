@@ -1,3 +1,5 @@
 git:
   commit:
     signOff: true
+gui:
+  useHunkModeInStagingView: false  # by default interactive staging is on hunk by hunk mode, this make it line by line
