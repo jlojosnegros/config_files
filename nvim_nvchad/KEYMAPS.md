@@ -32,6 +32,7 @@
 | `<leader>gP` | Preview hunk       | Vista previa         |
 | `<leader>gB` | Blame línea        | Quién modificó       |
 | `<leader>gd` | Diff contra HEAD   | Ver diferencias      |
+| `<leader>lg` | Abrir LazyGit      | Ventana flotante     |
 | `]h`         | Siguiente hunk     | Navegar adelante     |
 | `[h`         | Hunk anterior      | Navegar atrás        |
 
@@ -129,7 +130,7 @@
 
 ---
 
-**Total: 89 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
+**Total: 90 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
 
 ## Notas Adicionales
 
@@ -143,7 +144,7 @@
 | Categoría  | Prefijo     | Cantidad |
 | ---------- | ----------- | -------- |
 | Búsquedas  | `<leader>s` | 12       |
-| Git        | `<leader>g` | 11       |
+| Git        | `<leader>g` | 12       |
 | Código/LSP | `<leader>c` | 17       |
 | Debug      | `<leader>d` | 9        |
 | Perfiles   | `<leader>p` | 6        |

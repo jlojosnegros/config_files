@@ -84,6 +84,65 @@ map("n", "<leader>gd", function()
   local ok, gs = pcall(require, "gitsigns")
   if ok then gs.diffthis() else vim.notify("gitsigns no cargado", vim.log.levels.WARN) end
 end, opt("Diff contra HEAD"))
+
+-- LazyGit en ventana flotante desde la raíz del repositorio
+map("n", "<leader>lg", function()
+  -- Buscar la raíz del repositorio git
+  local git_root = vim.fn.system("git rev-parse --show-toplevel"):gsub("\n", "")
+  if vim.v.shell_error ~= 0 then
+    vim.notify("No estás en un repositorio git", vim.log.levels.WARN)
+    return
+  end
+
+  -- Configuración de la ventana flotante
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.9)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  -- Crear buffer para el terminal
+  local buf = vim.api.nvim_create_buf(false, true)
+
+  -- Configurar opciones del buffer
+  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+  vim.api.nvim_buf_set_option(buf, "filetype", "lazygit")
+
+  -- Crear ventana flotante
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+    title = " LazyGit ",
+    title_pos = "center"
+  })
+
+  -- Configurar opciones de la ventana
+  vim.api.nvim_win_set_option(win, "winhl", "Normal:Normal,FloatBorder:FloatBorder")
+
+  -- Comando para ejecutar lazygit
+  local cmd = string.format("cd '%s' && lazygit", git_root)
+
+  -- Ejecutar lazygit en el terminal flotante
+  vim.fn.termopen(cmd, {
+    on_exit = function()
+      -- Cerrar la ventana cuando lazygit termine
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_close(win, true)
+      end
+    end
+  })
+
+  -- Entrar en modo terminal automáticamente
+  vim.cmd("startinsert")
+
+  -- Keymap para cerrar con Esc en modo normal dentro del terminal
+  vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", ":close<CR>", { silent = true, noremap = true })
+  vim.api.nvim_buf_set_keymap(buf, "n", "q", ":close<CR>", { silent = true, noremap = true })
+end, opt("Abrir LazyGit (flotante)"))
 map("n", "]h", function()
   local ok, gs = pcall(require, "gitsigns")
   if ok then gs.next_hunk() else vim.notify("gitsigns no cargado", vim.log.levels.WARN) end
