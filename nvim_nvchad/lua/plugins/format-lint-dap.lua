@@ -10,6 +10,7 @@ return {
       rust = { "rustfmt" },
       bzl = { "buildifier" },
       starlark = { "buildifier" },
+      markdown = { "prettier" },
     })
 
     -- Respeta toggles global/buffer:
@@ -40,6 +41,7 @@ return {
         rust = { "clippy" },
         bzl = { "buildifier" },
         starlark = { "buildifier" },
+        markdown = { "markdownlint-cli2" },
       }
       vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
         callback = function() require("lint").try_lint() end,
