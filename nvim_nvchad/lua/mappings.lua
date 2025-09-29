@@ -277,7 +277,7 @@ map("i", "jk", "<ESC>")
 -- =================== AÑADIDOS DE NAVEGACIÓN ========================
 -- ===================================================================
 
--- which-key: añade grupos nuevos (Buffers / Jumps / Windows / Tabs) SIN tocar lo anterior
+-- which-key: añade grupos nuevos (Buffers / Jumps / Windows / Tabs / Diff) SIN tocar lo anterior
 do
   local ok, wk = pcall(require, "which-key")
   if ok and wk.add then
@@ -286,6 +286,7 @@ do
       { "<leader>j", group = "Jumps" },
       { "<leader>w", group = "Windows" },
       { "<leader>t", group = "Tabs" },
+      { "<leader>D", group = "Diff" },
     })
   elseif ok and wk.register then
     wk.register({
@@ -293,6 +294,7 @@ do
       j = { name = "Jumps" },
       w = { name = "Windows" },
       t = { name = "Tabs" },
+      D = { name = "Diff" },
     }, { prefix = "<leader>" })
   end
 end
@@ -507,3 +509,281 @@ map("n", "<leader>ti", function()
     current_tab, total_tabs, tab_wins, display_name
   ))
 end, opt("Info de pestaña actual"))
+
+-- ===================================================================
+-- ==================== COMPARACIÓN DE ARCHIVOS ====================
+-- ===================================================================
+
+-- Variables para mantener estado de diff
+local diff_state = {
+  is_active = false,
+  buffers = {},
+}
+
+-- Función para resetear el modo diff
+local function reset_diff()
+  if diff_state.is_active then
+    for _, buf in ipairs(diff_state.buffers) do
+      if vim.api.nvim_buf_is_valid(buf) then
+        vim.api.nvim_buf_call(buf, function()
+          vim.cmd("diffoff")
+        end)
+      end
+    end
+    diff_state.is_active = false
+    diff_state.buffers = {}
+    vim.notify("Modo diff desactivado")
+  end
+end
+
+-- Diff entre buffer actual y otro archivo
+map("n", "<leader>Df", function()
+  reset_diff()
+
+  -- Usar Telescope para seleccionar el archivo a comparar
+  local ok, builtin = pcall(require, "telescope.builtin")
+  if not ok then
+    vim.notify("Telescope no disponible", vim.log.levels.ERROR)
+    return
+  end
+
+  local current_buf = vim.api.nvim_get_current_buf()
+  local current_file = vim.api.nvim_buf_get_name(current_buf)
+
+  if current_file == "" then
+    vim.notify("El buffer actual no tiene archivo asociado", vim.log.levels.WARN)
+    return
+  end
+
+  builtin.find_files({
+    prompt_title = "Seleccionar archivo para comparar con: " .. vim.fn.fnamemodify(current_file, ":t"),
+    attach_mappings = function(prompt_bufnr, map_local)
+      local actions = require("telescope.actions")
+      local action_state = require("telescope.actions.state")
+
+      map_local("i", "<CR>", function()
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+
+        if selection then
+          -- Abrir el archivo seleccionado en split vertical
+          vim.cmd("vsplit " .. selection.path)
+          local new_buf = vim.api.nvim_get_current_buf()
+
+          -- Activar diff en ambos buffers
+          vim.api.nvim_buf_call(current_buf, function() vim.cmd("diffthis") end)
+          vim.api.nvim_buf_call(new_buf, function() vim.cmd("diffthis") end)
+
+          diff_state.is_active = true
+          diff_state.buffers = { current_buf, new_buf }
+          vim.notify("Diff activado entre archivos")
+        end
+      end)
+
+      return true
+    end,
+  })
+end, opt("Diff con archivo seleccionado"))
+
+-- Diff entre dos archivos desde cero
+map("n", "<leader>DD", function()
+  reset_diff()
+
+  local ok, builtin = pcall(require, "telescope.builtin")
+  if not ok then
+    vim.notify("Telescope no disponible", vim.log.levels.ERROR)
+    return
+  end
+
+  local files_selected = {}
+
+  -- Función para seleccionar el primer archivo
+  local function select_first_file()
+    builtin.find_files({
+      prompt_title = "Seleccionar PRIMER archivo para comparar",
+      attach_mappings = function(prompt_bufnr, map_local)
+        local actions = require("telescope.actions")
+        local action_state = require("telescope.actions.state")
+
+        map_local("i", "<CR>", function()
+          local selection = action_state.get_selected_entry()
+          actions.close(prompt_bufnr)
+
+          if selection then
+            files_selected[1] = selection.path
+            select_second_file()
+          end
+        end)
+
+        return true
+      end,
+    })
+  end
+
+  -- Función para seleccionar el segundo archivo
+  function select_second_file()
+    builtin.find_files({
+      prompt_title = "Seleccionar SEGUNDO archivo (comparar con: " .. vim.fn.fnamemodify(files_selected[1], ":t") .. ")",
+      attach_mappings = function(prompt_bufnr, map_local)
+        local actions = require("telescope.actions")
+        local action_state = require("telescope.actions.state")
+
+        map_local("i", "<CR>", function()
+          local selection = action_state.get_selected_entry()
+          actions.close(prompt_bufnr)
+
+          if selection then
+            files_selected[2] = selection.path
+
+            -- Abrir ambos archivos en splits y activar diff
+            vim.cmd("edit " .. files_selected[1])
+            local buf1 = vim.api.nvim_get_current_buf()
+
+            vim.cmd("vsplit " .. files_selected[2])
+            local buf2 = vim.api.nvim_get_current_buf()
+
+            -- Activar diff
+            vim.api.nvim_buf_call(buf1, function() vim.cmd("diffthis") end)
+            vim.api.nvim_buf_call(buf2, function() vim.cmd("diffthis") end)
+
+            diff_state.is_active = true
+            diff_state.buffers = { buf1, buf2 }
+
+            vim.notify(string.format("Diff entre: %s vs %s",
+              vim.fn.fnamemodify(files_selected[1], ":t"),
+              vim.fn.fnamemodify(files_selected[2], ":t")
+            ))
+          end
+        end)
+
+        return true
+      end,
+    })
+  end
+
+  select_first_file()
+end, opt("Diff entre dos archivos nuevos"))
+
+-- Diff del buffer actual con una versión anterior (si es un archivo git)
+map("n", "<leader>Dg", function()
+  reset_diff()
+
+  local current_file = vim.api.nvim_buf_get_name(0)
+  if current_file == "" then
+    vim.notify("El buffer actual no tiene archivo asociado", vim.log.levels.WARN)
+    return
+  end
+
+  -- Verificar si estamos en un repo git
+  local git_check = vim.fn.system("git rev-parse --is-inside-work-tree")
+  if vim.v.shell_error ~= 0 then
+    vim.notify("No estás en un repositorio git", vim.log.levels.WARN)
+    return
+  end
+
+  -- Obtener lista de commits que modificaron este archivo
+  local log_cmd = string.format("git log --oneline -10 --follow -- %s", vim.fn.shellescape(current_file))
+  local commits = vim.fn.systemlist(log_cmd)
+
+  if #commits == 0 then
+    vim.notify("No se encontraron commits para este archivo", vim.log.levels.WARN)
+    return
+  end
+
+  -- Usar vim.ui.select para elegir el commit
+  local commit_items = {}
+  for _, commit_line in ipairs(commits) do
+    local hash = commit_line:match("^(%w+)")
+    local message = commit_line:match("^%w+%s+(.+)")
+    table.insert(commit_items, {
+      text = string.format("%s: %s", hash:sub(1, 7), message),
+      hash = hash,
+    })
+  end
+
+  vim.ui.select(commit_items, {
+    prompt = "Seleccionar commit para comparar:",
+    format_item = function(item) return item.text end,
+  }, function(choice)
+    if choice then
+      local current_buf = vim.api.nvim_get_current_buf()
+
+      -- Crear un buffer temporal con la versión del commit
+      local temp_content = vim.fn.system(string.format(
+        "git show %s:%s",
+        choice.hash,
+        vim.fn.fnamemodify(current_file, ":.")
+      ))
+
+      if vim.v.shell_error ~= 0 then
+        vim.notify("Error al obtener contenido del commit", vim.log.levels.ERROR)
+        return
+      end
+
+      -- Crear split y buffer temporal
+      vim.cmd("vsplit")
+      local temp_buf = vim.api.nvim_create_buf(false, true)
+      vim.api.nvim_win_set_buf(0, temp_buf)
+
+      -- Configurar el buffer temporal
+      local lines = vim.split(temp_content, "\n")
+      vim.api.nvim_buf_set_lines(temp_buf, 0, -1, false, lines)
+      vim.api.nvim_buf_set_option(temp_buf, "filetype", vim.api.nvim_buf_get_option(current_buf, "filetype"))
+      vim.api.nvim_buf_set_option(temp_buf, "readonly", true)
+      vim.api.nvim_buf_set_option(temp_buf, "modifiable", false)
+      vim.api.nvim_buf_set_name(temp_buf, string.format("[%s] %s", choice.hash:sub(1, 7), vim.fn.fnamemodify(current_file, ":t")))
+
+      -- Activar diff
+      vim.api.nvim_buf_call(current_buf, function() vim.cmd("diffthis") end)
+      vim.api.nvim_buf_call(temp_buf, function() vim.cmd("diffthis") end)
+
+      diff_state.is_active = true
+      diff_state.buffers = { current_buf, temp_buf }
+
+      vim.notify(string.format("Diff con commit %s", choice.hash:sub(1, 7)))
+    end
+  end)
+end, opt("Diff con versión de git"))
+
+-- Navegación entre diferencias
+map("n", "<leader>Dn", "]c", opt("Siguiente diferencia"))
+map("n", "<leader>DP", "[c", opt("Diferencia anterior"))
+
+-- Aplicar/obtener cambios (solo funciona en modo diff)
+map("n", "<leader>Do", "do", opt("Obtener cambio (diff obtain)"))
+map("n", "<leader>Dp", "dp", opt("Poner cambio (diff put)"))
+
+-- Actualizar diff
+map("n", "<leader>Du", ":diffupdate<CR>", opt("Actualizar diff"))
+
+-- Desactivar diff
+map("n", "<leader>Dq", function()
+  reset_diff()
+end, opt("Salir del modo diff"))
+
+-- Toggle diff del buffer actual
+map("n", "<leader>Dt", function()
+  if vim.wo.diff then
+    vim.cmd("diffoff")
+    vim.notify("Diff desactivado para este buffer")
+  else
+    vim.cmd("diffthis")
+    vim.notify("Diff activado para este buffer")
+  end
+end, opt("Toggle diff en buffer actual"))
+
+-- Información del estado diff
+map("n", "<leader>Di", function()
+  if diff_state.is_active then
+    local buffer_names = {}
+    for _, buf in ipairs(diff_state.buffers) do
+      if vim.api.nvim_buf_is_valid(buf) then
+        local name = vim.api.nvim_buf_get_name(buf)
+        table.insert(buffer_names, name ~= "" and vim.fn.fnamemodify(name, ":t") or "[No Name]")
+      end
+    end
+    vim.notify("Diff activo entre: " .. table.concat(buffer_names, " vs "))
+  else
+    vim.notify("No hay diff activo")
+  end
+end, opt("Info del estado diff"))

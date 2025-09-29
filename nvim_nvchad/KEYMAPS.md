@@ -202,6 +202,35 @@
 | `<leader>tL` | Listar pestañas      | Selector interactivo     |
 | `<leader>ti` | Info pestaña         | Mostrar información      |
 
+### **🔍 DIFF/COMPARACIÓN - `<leader>D`**
+
+#### **Crear Comparaciones**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>Df` | Diff con archivo         | Comparar buffer con otro archivo |
+| `<leader>DD` | Diff dos archivos        | Comparar dos archivos nuevos   |
+| `<leader>Dg` | Diff con git             | Comparar con versión de commit |
+
+#### **Navegación**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>Dn` | Siguiente diferencia     | Ir a próximo cambio            |
+| `<leader>DP` | Diferencia anterior      | Ir a cambio previo             |
+
+#### **Aplicar Cambios**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>Do` | Obtener cambio           | Copiar cambio desde otro lado  |
+| `<leader>Dp` | Poner cambio             | Enviar cambio al otro lado     |
+
+#### **Gestión**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>Du` | Actualizar diff          | Refrescar comparación          |
+| `<leader>Dt` | Toggle diff              | Activar/desactivar en buffer   |
+| `<leader>Dq` | Salir de diff            | Desactivar modo comparación    |
+| `<leader>Di` | Info diff                | Estado actual de comparación   |
+
 ### **⚡ FLASH (Movimiento rápido)**
 
 | Tecla   | Modo            | Acción            |
@@ -221,7 +250,7 @@
 
 ---
 
-**Total: 140 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
+**Total: 152 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
 
 ## Notas Adicionales
 
@@ -242,8 +271,9 @@
 | Buffers    | `<leader>b` | 5        |
 | Navegación | `<leader>j` | 7        |
 | Vista      | `<leader>z` | 3        |
-| Ventanas   | `<leader>w` | 25       |
+| Ventanas   | `<leader>w` | 26       |
 | Pestañas   | `<leader>t` | 25       |
+| Diff       | `<leader>D` | 12       |
 | Flash      | Varios      | 9        |
 | Utilidades | Varios      | 2        |
 
