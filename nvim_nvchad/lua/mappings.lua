@@ -277,7 +277,7 @@ map("i", "jk", "<ESC>")
 -- =================== AÑADIDOS DE NAVEGACIÓN ========================
 -- ===================================================================
 
--- which-key: añade grupos nuevos (Buffers / Jumps / Windows) SIN tocar lo anterior
+-- which-key: añade grupos nuevos (Buffers / Jumps / Windows / Tabs) SIN tocar lo anterior
 do
   local ok, wk = pcall(require, "which-key")
   if ok and wk.add then
@@ -285,12 +285,14 @@ do
       { "<leader>b", group = "Buffers" },
       { "<leader>j", group = "Jumps" },
       { "<leader>w", group = "Windows" },
+      { "<leader>t", group = "Tabs" },
     })
   elseif ok and wk.register then
     wk.register({
       b = { name = "Buffers" },
       j = { name = "Jumps" },
       w = { name = "Windows" },
+      t = { name = "Tabs" },
     }, { prefix = "<leader>" })
   end
 end
@@ -331,7 +333,6 @@ map("n", "<leader>zb", "zb",                 opt("Línea abajo (bottom)"))
 -- Crear splits
 map("n", "<leader>wv", ":vsplit<CR>",        opt("Split vertical"))
 map("n", "<leader>wh", ":split<CR>",         opt("Split horizontal"))
-map("n", "<leader>wt", ":tabnew<CR>",        opt("Nueva pestaña"))
 
 -- Navegación entre ventanas
 map("n", "<leader>ww", "<C-w>w",             opt("Siguiente ventana"))
@@ -388,3 +389,79 @@ map("n", "<leader>ws", function()
     vim.cmd("wincmd H")  -- Cambiar a vertical
   end
 end, opt("Cambiar orientación del split"))
+
+-- ===================================================================
+-- =================== GESTIÓN DE PESTAÑAS (TABS) ===================
+-- ===================================================================
+
+-- Crear y navegar pestañas
+map("n", "<leader>tn", ":tabnew<CR>",        opt("Nueva pestaña"))
+map("n", "<leader>tc", ":tabclose<CR>",      opt("Cerrar pestaña actual"))
+map("n", "<leader>to", ":tabonly<CR>",       opt("Cerrar otras pestañas"))
+map("n", "<leader>tm", ":tabmove<CR>",       opt("Mover pestaña al final"))
+
+-- Navegación entre pestañas
+map("n", "<leader>tj", ":tabnext<CR>",       opt("Siguiente pestaña"))
+map("n", "<leader>tk", ":tabprevious<CR>",   opt("Pestaña anterior"))
+map("n", "<leader>tl", ":tablast<CR>",       opt("Última pestaña"))
+map("n", "<leader>tf", ":tabfirst<CR>",      opt("Primera pestaña"))
+
+-- Navegación rápida con números
+map("n", "<leader>t1", "1gt",                opt("Ir a pestaña 1"))
+map("n", "<leader>t2", "2gt",                opt("Ir a pestaña 2"))
+map("n", "<leader>t3", "3gt",                opt("Ir a pestaña 3"))
+map("n", "<leader>t4", "4gt",                opt("Ir a pestaña 4"))
+map("n", "<leader>t5", "5gt",                opt("Ir a pestaña 5"))
+map("n", "<leader>t6", "6gt",                opt("Ir a pestaña 6"))
+map("n", "<leader>t7", "7gt",                opt("Ir a pestaña 7"))
+map("n", "<leader>t8", "8gt",                opt("Ir a pestaña 8"))
+map("n", "<leader>t9", "9gt",                opt("Ir a pestaña 9"))
+
+-- Navegación alternativa con Alt (más rápida)
+map("n", "<A-j>", ":tabnext<CR>",            opt("Siguiente pestaña (Alt)"))
+map("n", "<A-k>", ":tabprevious<CR>",        opt("Pestaña anterior (Alt)"))
+map("n", "<A-n>", ":tabnew<CR>",             opt("Nueva pestaña (Alt)"))
+map("n", "<A-c>", ":tabclose<CR>",           opt("Cerrar pestaña (Alt)"))
+
+-- Listar pestañas con Telescope
+map("n", "<leader>tL", function()
+  -- Lista personalizada de pestañas con información detallada
+  local tabs = {}
+  for i = 1, vim.fn.tabpagenr('$') do
+    local tab_wins = vim.fn.tabpagewinnr(i, '$')
+    local tab_buf = vim.fn.tabpagebuflist(i)[vim.fn.tabpagewinnr(i)]
+    local buf_name = vim.fn.bufname(tab_buf)
+    local buf_modified = vim.fn.getbufvar(tab_buf, '&modified') == 1
+
+    local display_name = buf_name ~= "" and vim.fn.fnamemodify(buf_name, ":t") or "[No Name]"
+    if buf_modified then display_name = display_name .. " [+]" end
+
+    table.insert(tabs, {
+      text = string.format("Tab %d: %s (%d windows)", i, display_name, tab_wins),
+      value = i,
+    })
+  end
+
+  vim.ui.select(tabs, {
+    prompt = "Seleccionar pestaña:",
+    format_item = function(item) return item.text end,
+  }, function(choice)
+    if choice then
+      vim.cmd("tabnext " .. choice.value)
+    end
+  end)
+end, opt("Listar pestañas"))
+
+-- Información de pestañas
+map("n", "<leader>ti", function()
+  local current_tab = vim.fn.tabpagenr()
+  local total_tabs = vim.fn.tabpagenr('$')
+  local tab_wins = vim.fn.tabpagewinnr(current_tab, '$')
+  local buf_name = vim.fn.bufname()
+  local display_name = buf_name ~= "" and vim.fn.fnamemodify(buf_name, ":t") or "[No Name]"
+
+  vim.notify(string.format(
+    "Pestaña %d de %d | %d ventanas | Buffer: %s",
+    current_tab, total_tabs, tab_wins, display_name
+  ))
+end, opt("Info de pestaña actual"))

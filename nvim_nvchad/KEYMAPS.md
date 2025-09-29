@@ -118,7 +118,6 @@
 | ------------ | ---------------- | ---------------------- |
 | `<leader>wv` | Split vertical   | Dividir verticalmente  |
 | `<leader>wh` | Split horizontal | Dividir horizontalmente|
-| `<leader>wt` | Nueva pestaña    | Crear nueva tab        |
 
 #### **Navegación**
 | Tecla        | Acción             | Descripción           |
@@ -162,6 +161,47 @@
 | `<leader>wT` | Mover a nueva tab    | Convertir en pestaña     |
 | `<leader>ws` | Cambiar orientación  | Horizontal ↔ Vertical    |
 
+### **📑 PESTAÑAS (TABS) - `<leader>t`**
+
+#### **Crear y Gestionar**
+| Tecla        | Acción               | Descripción              |
+| ------------ | -------------------- | ------------------------ |
+| `<leader>tn` | Nueva pestaña        | Crear pestaña vacía      |
+| `<leader>tc` | Cerrar pestaña       | Cerrar actual            |
+| `<leader>to` | Cerrar otras         | Solo mantener actual     |
+| `<leader>tm` | Mover pestaña        | Mover al final           |
+
+#### **Navegación**
+| Tecla        | Acción               | Descripción              |
+| ------------ | -------------------- | ------------------------ |
+| `<leader>tj` | Siguiente pestaña    | Navegar adelante         |
+| `<leader>tk` | Pestaña anterior     | Navegar atrás            |
+| `<leader>tl` | Última pestaña       | Ir al final              |
+| `<leader>tf` | Primera pestaña      | Ir al inicio             |
+| `<A-j>`      | Siguiente (rápido)   | Alt + j                  |
+| `<A-k>`      | Anterior (rápido)    | Alt + k                  |
+| `<A-n>`      | Nueva (rápido)       | Alt + n                  |
+| `<A-c>`      | Cerrar (rápido)      | Alt + c                  |
+
+#### **Acceso Directo**
+| Tecla        | Acción               | Descripción              |
+| ------------ | -------------------- | ------------------------ |
+| `<leader>t1` | Ir a pestaña 1       | Acceso directo           |
+| `<leader>t2` | Ir a pestaña 2       | Acceso directo           |
+| `<leader>t3` | Ir a pestaña 3       | Acceso directo           |
+| `<leader>t4` | Ir a pestaña 4       | Acceso directo           |
+| `<leader>t5` | Ir a pestaña 5       | Acceso directo           |
+| `<leader>t6` | Ir a pestaña 6       | Acceso directo           |
+| `<leader>t7` | Ir a pestaña 7       | Acceso directo           |
+| `<leader>t8` | Ir a pestaña 8       | Acceso directo           |
+| `<leader>t9` | Ir a pestaña 9       | Acceso directo           |
+
+#### **Información**
+| Tecla        | Acción               | Descripción              |
+| ------------ | -------------------- | ------------------------ |
+| `<leader>tL` | Listar pestañas      | Selector interactivo     |
+| `<leader>ti` | Info pestaña         | Mostrar información      |
+
 ### **⚡ FLASH (Movimiento rápido)**
 
 | Tecla   | Modo            | Acción            |
@@ -181,7 +221,7 @@
 
 ---
 
-**Total: 115 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
+**Total: 140 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
 
 ## Notas Adicionales
 
@@ -203,6 +243,7 @@
 | Navegación | `<leader>j` | 7        |
 | Vista      | `<leader>z` | 3        |
 | Ventanas   | `<leader>w` | 25       |
+| Pestañas   | `<leader>t` | 25       |
 | Flash      | Varios      | 9        |
 | Utilidades | Varios      | 2        |
 
