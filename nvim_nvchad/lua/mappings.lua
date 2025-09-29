@@ -277,7 +277,7 @@ map("i", "jk", "<ESC>")
 -- =================== AÑADIDOS DE NAVEGACIÓN ========================
 -- ===================================================================
 
--- which-key: añade grupos nuevos (Buffers / Jumps / Windows / Tabs / Diff) SIN tocar lo anterior
+-- which-key: añade grupos nuevos (Buffers / Jumps / Windows / Tabs / Diff / Search) SIN tocar lo anterior
 do
   local ok, wk = pcall(require, "which-key")
   if ok and wk.add then
@@ -287,6 +287,7 @@ do
       { "<leader>w", group = "Windows" },
       { "<leader>t", group = "Tabs" },
       { "<leader>D", group = "Diff" },
+      { "<leader>S", group = "Search Advanced" },
     })
   elseif ok and wk.register then
     wk.register({
@@ -295,6 +296,7 @@ do
       w = { name = "Windows" },
       t = { name = "Tabs" },
       D = { name = "Diff" },
+      S = { name = "Search Advanced" },
     }, { prefix = "<leader>" })
   end
 end
@@ -787,3 +789,395 @@ map("n", "<leader>Di", function()
     vim.notify("No hay diff activo")
   end
 end, opt("Info del estado diff"))
+
+-- ===================================================================
+-- =============== BÚSQUEDA AVANZADA CON VENTANA PERSISTENTE ========
+-- ===================================================================
+
+-- Variables para mantener el estado de búsqueda
+local search_state = {
+  results_buf = nil,
+  results_win = nil,
+  source_buf = nil,
+  current_index = 1,
+  matches = {},
+  pattern = "",
+}
+
+-- Función para limpiar búsquedas anteriores
+local function cleanup_search()
+  if search_state.results_win and vim.api.nvim_win_is_valid(search_state.results_win) then
+    vim.api.nvim_win_close(search_state.results_win, true)
+  end
+  if search_state.results_buf and vim.api.nvim_buf_is_valid(search_state.results_buf) then
+    vim.api.nvim_buf_delete(search_state.results_buf, { force = true })
+  end
+  search_state.results_buf = nil
+  search_state.results_win = nil
+  search_state.matches = {}
+  search_state.current_index = 1
+end
+
+-- Función para crear la ventana de resultados
+local function create_results_window(matches, pattern, source_buf)
+  cleanup_search()
+
+  if #matches == 0 then
+    vim.notify("No se encontraron coincidencias para: " .. pattern, vim.log.levels.WARN)
+    return
+  end
+
+  -- Crear buffer para resultados
+  local results_buf = vim.api.nvim_create_buf(false, true)
+  search_state.results_buf = results_buf
+  search_state.source_buf = source_buf
+  search_state.matches = matches
+  search_state.pattern = pattern
+
+  -- Configurar el buffer
+  vim.api.nvim_buf_set_option(results_buf, "bufhidden", "wipe")
+  vim.api.nvim_buf_set_option(results_buf, "buftype", "nofile")
+  vim.api.nvim_buf_set_option(results_buf, "swapfile", false)
+  vim.api.nvim_buf_set_option(results_buf, "modifiable", true)
+
+  -- Crear contenido del buffer
+  local lines = {}
+  local source_name = vim.api.nvim_buf_get_name(source_buf)
+  local display_name = source_name ~= "" and vim.fn.fnamemodify(source_name, ":t") or "[No Name]"
+
+  table.insert(lines, "=== Resultados de búsqueda: '" .. pattern .. "' en " .. display_name .. " ===")
+  table.insert(lines, "Total: " .. #matches .. " coincidencias")
+  table.insert(lines, "")
+  table.insert(lines, "Navegación: <Enter>=Ir, <C-n>=Siguiente, <C-p>=Anterior, q=Cerrar")
+  table.insert(lines, "")
+
+  for i, match in ipairs(matches) do
+    local prefix = string.format("%3d: L%d | ", i, match.line)
+    table.insert(lines, prefix .. match.text)
+  end
+
+  vim.api.nvim_buf_set_lines(results_buf, 0, -1, false, lines)
+  vim.api.nvim_buf_set_option(results_buf, "modifiable", false)
+
+  -- Configurar resaltado
+  vim.api.nvim_buf_add_highlight(results_buf, -1, "Title", 0, 0, -1)
+  vim.api.nvim_buf_add_highlight(results_buf, -1, "Comment", 1, 0, -1)
+  vim.api.nvim_buf_add_highlight(results_buf, -1, "Comment", 3, 0, -1)
+
+  -- Resaltar el patrón en cada línea de resultado
+  -- Extraer el patrón original sin la información de case
+  local original_pattern = pattern:match("^(.-)%s*%(") or pattern
+  local is_case_sensitive = has_uppercase(original_pattern)
+
+  for i, match in ipairs(matches) do
+    local line_idx = i + 4  -- Ajustar por las líneas de cabecera
+    local text_start = string.len(string.format("%3d: L%d | ", i, match.line))
+
+    -- Buscar todas las ocurrencias del patrón en la línea para resaltado
+    local text = match.text
+    local start_pos = 1
+    while true do
+      local match_start, match_end
+      if is_case_sensitive then
+        match_start, match_end = string.find(text, original_pattern, start_pos, true)
+      else
+        match_start, match_end = string.find(string.lower(text), string.lower(original_pattern), start_pos, true)
+      end
+
+      if not match_start then break end
+
+      vim.api.nvim_buf_add_highlight(
+        results_buf, -1, "Search",
+        line_idx, text_start + match_start - 1,
+        text_start + match_end
+      )
+      start_pos = match_end + 1
+    end
+  end
+
+  -- Crear ventana split horizontal en la parte inferior
+  local current_win = vim.api.nvim_get_current_win()
+  vim.cmd("botright split")
+  vim.cmd("resize 15")  -- Altura fija de 15 líneas
+
+  local results_win = vim.api.nvim_get_current_win()
+  search_state.results_win = results_win
+
+  vim.api.nvim_win_set_buf(results_win, results_buf)
+  vim.api.nvim_buf_set_name(results_buf, "[Búsqueda: " .. pattern .. "]")
+
+  -- Configurar keymaps locales para el buffer de resultados
+  local opts_local = { buffer = results_buf, silent = true }
+
+  vim.keymap.set("n", "<CR>", function()
+    local cursor = vim.api.nvim_win_get_cursor(results_win)
+    local line = cursor[1]
+    if line > 5 then  -- Solo líneas con resultados
+      local match_idx = line - 5
+      if matches[match_idx] then
+        search_state.current_index = match_idx
+        jump_to_match(matches[match_idx])
+      end
+    end
+  end, opts_local)
+
+  vim.keymap.set("n", "<C-n>", function()
+    search_state.current_index = search_state.current_index % #matches + 1
+    jump_to_match(matches[search_state.current_index])
+    highlight_current_result()
+  end, opts_local)
+
+  vim.keymap.set("n", "<C-p>", function()
+    search_state.current_index = search_state.current_index - 1
+    if search_state.current_index < 1 then
+      search_state.current_index = #matches
+    end
+    jump_to_match(matches[search_state.current_index])
+    highlight_current_result()
+  end, opts_local)
+
+  vim.keymap.set("n", "q", function()
+    cleanup_search()
+  end, opts_local)
+
+  vim.keymap.set("n", "r", function()
+    refresh_search()
+  end, opts_local)
+
+  -- Posicionar cursor en el primer resultado
+  vim.api.nvim_win_set_cursor(results_win, {6, 0})  -- Primera línea de resultado
+
+  vim.notify(string.format("Encontradas %d coincidencias de '%s'", #matches, pattern))
+
+  -- Saltar automáticamente al primer resultado
+  if matches[1] then
+    jump_to_match(matches[1])
+  end
+end
+
+-- Función para saltar a una coincidencia específica
+function jump_to_match(match)
+  if not search_state.source_buf or not vim.api.nvim_buf_is_valid(search_state.source_buf) then
+    vim.notify("Buffer fuente no válido", vim.log.levels.ERROR)
+    return
+  end
+
+  -- Encontrar ventana que contenga el buffer fuente
+  local source_win = nil
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_buf(win) == search_state.source_buf and win ~= search_state.results_win then
+      source_win = win
+      break
+    end
+  end
+
+  if not source_win then
+    -- Crear nueva ventana si no existe
+    vim.cmd("wincmd k")  -- Ir a ventana superior
+    source_win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(source_win, search_state.source_buf)
+  end
+
+  -- Saltar a la línea y centrar
+  vim.api.nvim_win_set_cursor(source_win, {match.line, match.col - 1})
+  vim.api.nvim_win_call(source_win, function()
+    vim.cmd("normal! zz")  -- Centrar línea
+  end)
+
+  -- Resaltar temporalmente la línea encontrada
+  local ns_id = vim.api.nvim_create_namespace("search_highlight")
+  vim.api.nvim_buf_clear_namespace(search_state.source_buf, ns_id, 0, -1)
+  vim.api.nvim_buf_add_highlight(search_state.source_buf, ns_id, "CursorLine", match.line - 1, 0, -1)
+
+  -- Limpiar resaltado después de 2 segundos
+  vim.defer_fn(function()
+    if vim.api.nvim_buf_is_valid(search_state.source_buf) then
+      vim.api.nvim_buf_clear_namespace(search_state.source_buf, ns_id, 0, -1)
+    end
+  end, 2000)
+end
+
+-- Función para resaltar el resultado actual en la ventana de resultados
+function highlight_current_result()
+  if not search_state.results_buf or not vim.api.nvim_buf_is_valid(search_state.results_buf) then
+    return
+  end
+
+  -- Limpiar resaltados previos
+  local ns_id = vim.api.nvim_create_namespace("current_result")
+  vim.api.nvim_buf_clear_namespace(search_state.results_buf, ns_id, 0, -1)
+
+  -- Resaltar línea actual
+  local line_idx = search_state.current_index + 4  -- Ajustar por cabeceras
+  vim.api.nvim_buf_add_highlight(search_state.results_buf, ns_id, "CursorLine", line_idx, 0, -1)
+
+  -- Mover cursor en la ventana de resultados
+  if search_state.results_win and vim.api.nvim_win_is_valid(search_state.results_win) then
+    vim.api.nvim_win_set_cursor(search_state.results_win, {line_idx + 1, 0})
+  end
+end
+
+-- Función para refrescar la búsqueda
+function refresh_search()
+  if not search_state.source_buf or not vim.api.nvim_buf_is_valid(search_state.source_buf) then
+    vim.notify("Buffer fuente no válido", vim.log.levels.ERROR)
+    return
+  end
+
+  local pattern = search_state.pattern
+  if pattern == "" then
+    vim.notify("No hay patrón de búsqueda activo", vim.log.levels.WARN)
+    return
+  end
+
+  perform_search(pattern, search_state.source_buf, false)  -- false = no es regex
+end
+
+-- Función para detectar si un patrón contiene mayúsculas
+local function has_uppercase(pattern)
+  return pattern:match("%u") ~= nil
+end
+
+-- Función para realizar búsqueda inteligente (smartcase)
+local function smart_search(line_text, pattern, col, is_case_sensitive)
+  if is_case_sensitive then
+    -- Búsqueda sensible a mayúsculas/minúsculas
+    return string.find(line_text, pattern, col, true)
+  else
+    -- Búsqueda insensible a mayúsculas/minúsculas
+    return string.find(string.lower(line_text), string.lower(pattern), col, true)
+  end
+end
+
+-- Función principal de búsqueda
+function perform_search(pattern, buffer, is_regex)
+  if pattern == "" then
+    vim.notify("Patrón vacío", vim.log.levels.WARN)
+    return
+  end
+
+  local lines = vim.api.nvim_buf_get_lines(buffer, 0, -1, false)
+  local matches = {}
+
+  -- Determinar si la búsqueda debe ser case-sensitive (smartcase)
+  local is_case_sensitive = is_regex or has_uppercase(pattern)
+  local case_info = is_case_sensitive and "(case-sensitive)" or "(case-insensitive)"
+
+  for line_num, line_text in ipairs(lines) do
+    local col = 1
+
+    while true do
+      local match_start, match_end
+
+      if is_regex then
+        -- Para regex, usar la lógica original
+        match_start, match_end = string.find(line_text, pattern, col)
+      else
+        -- Para búsqueda de texto simple, usar smartcase
+        match_start, match_end = smart_search(line_text, pattern, col, is_case_sensitive)
+      end
+
+      if not match_start then break end
+
+      -- Para case-insensitive, necesitamos obtener el texto original de la coincidencia
+      local actual_match_text = string.sub(line_text, match_start, match_end)
+
+      table.insert(matches, {
+        line = line_num,
+        col = match_start,
+        text = line_text,
+        match_text = actual_match_text
+      })
+
+      col = match_end + 1
+    end
+  end
+
+  -- Añadir información sobre el tipo de búsqueda al patrón mostrado
+  local display_pattern = pattern .. " " .. case_info
+  create_results_window(matches, display_pattern, buffer)
+
+  -- Guardar el patrón original (sin la info adicional) para refrescos
+  search_state.pattern = pattern
+end
+
+-- Keymaps para búsqueda avanzada
+map("n", "<leader>Ss", function()
+  local current_buf = vim.api.nvim_get_current_buf()
+  vim.ui.input({
+    prompt = "Buscar texto: ",
+    default = vim.fn.expand("<cword>")  -- Palabra bajo el cursor por defecto
+  }, function(pattern)
+    if pattern and pattern ~= "" then
+      perform_search(pattern, current_buf, false)
+    end
+  end)
+end, opt("Búsqueda de texto en buffer"))
+
+map("n", "<leader>Sr", function()
+  local current_buf = vim.api.nvim_get_current_buf()
+  vim.ui.input({
+    prompt = "Buscar regex: ",
+  }, function(pattern)
+    if pattern and pattern ~= "" then
+      perform_search(pattern, current_buf, true)
+    end
+  end)
+end, opt("Búsqueda regex en buffer"))
+
+map("n", "<leader>Sw", function()
+  local current_buf = vim.api.nvim_get_current_buf()
+  local word = vim.fn.expand("<cword>")
+  if word ~= "" then
+    -- Búsqueda de palabra completa (con \b en regex)
+    local pattern = "\\b" .. vim.fn.escape(word, "\\") .. "\\b"
+    perform_search(pattern, current_buf, true)
+  else
+    vim.notify("No hay palabra bajo el cursor", vim.log.levels.WARN)
+  end
+end, opt("Buscar palabra completa bajo cursor"))
+
+map("n", "<leader>Sc", function()
+  cleanup_search()
+end, opt("Cerrar ventana de búsqueda"))
+
+-- Navegación global en búsquedas (funciona desde cualquier ventana)
+map("n", "<leader>Sn", function()
+  if #search_state.matches > 0 then
+    search_state.current_index = search_state.current_index % #search_state.matches + 1
+    jump_to_match(search_state.matches[search_state.current_index])
+    highlight_current_result()
+  else
+    vim.notify("No hay búsqueda activa", vim.log.levels.WARN)
+  end
+end, opt("Siguiente resultado de búsqueda"))
+
+map("n", "<leader>Sp", function()
+  if #search_state.matches > 0 then
+    search_state.current_index = search_state.current_index - 1
+    if search_state.current_index < 1 then
+      search_state.current_index = #search_state.matches
+    end
+    jump_to_match(search_state.matches[search_state.current_index])
+    highlight_current_result()
+  else
+    vim.notify("No hay búsqueda activa", vim.log.levels.WARN)
+  end
+end, opt("Resultado anterior de búsqueda"))
+
+map("n", "<leader>Si", function()
+  if #search_state.matches > 0 then
+    local source_name = vim.api.nvim_buf_get_name(search_state.source_buf)
+    local display_name = source_name ~= "" and vim.fn.fnamemodify(source_name, ":t") or "[No Name]"
+    vim.notify(string.format(
+      "Búsqueda: '%s' en %s | Resultado %d/%d",
+      search_state.pattern, display_name, search_state.current_index, #search_state.matches
+    ))
+  else
+    vim.notify("No hay búsqueda activa")
+  end
+end, opt("Info de búsqueda actual"))
+
+map("n", "<leader>SR", function()
+  refresh_search()
+end, opt("Refrescar búsqueda actual"))

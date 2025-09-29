@@ -231,6 +231,39 @@
 | `<leader>Dq` | Salir de diff            | Desactivar modo comparación    |
 | `<leader>Di` | Info diff                | Estado actual de comparación   |
 
+### **🔍 BÚSQUEDA AVANZADA - `<leader>S`**
+
+#### **Tipos de Búsqueda**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>Ss` | Buscar texto             | Búsqueda simple con smartcase  |
+| `<leader>Sr` | Buscar regex             | Búsqueda con expresión regular |
+| `<leader>Sw` | Buscar palabra           | Palabra completa bajo cursor   |
+
+> **Smartcase**: Si el patrón está en minúsculas → case-insensitive. Si contiene mayúsculas → case-sensitive.
+
+#### **Navegación en Resultados**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>Sn` | Siguiente resultado      | Ir al próximo resultado        |
+| `<leader>Sp` | Resultado anterior       | Ir al resultado previo         |
+
+#### **Gestión**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>Sc` | Cerrar búsqueda          | Cerrar ventana de resultados   |
+| `<leader>SR` | Refrescar búsqueda       | Actualizar resultados          |
+| `<leader>Si` | Info de búsqueda         | Estado actual de búsqueda      |
+
+#### **Controles en Ventana de Resultados**
+| Tecla   | Acción                   | Descripción                    |
+| ------- | ------------------------ | ------------------------------ |
+| `<CR>`  | Ir a resultado           | Saltar a línea seleccionada    |
+| `<C-n>` | Siguiente (local)        | Próximo resultado              |
+| `<C-p>` | Anterior (local)         | Resultado previo               |
+| `q`     | Cerrar                   | Cerrar ventana de búsqueda     |
+| `r`     | Refrescar                | Actualizar búsqueda            |
+
 ### **⚡ FLASH (Movimiento rápido)**
 
 | Tecla   | Modo            | Acción            |
@@ -250,7 +283,7 @@
 
 ---
 
-**Total: 152 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
+**Total: 168 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
 
 ## Notas Adicionales
 
@@ -261,20 +294,21 @@
 
 ### Atajos por Categoría
 
-| Categoría  | Prefijo     | Cantidad |
-| ---------- | ----------- | -------- |
-| Búsquedas  | `<leader>s` | 11       |
-| Git        | `<leader>g` | 12       |
-| Código/LSP | `<leader>c` | 17       |
-| Debug      | `<leader>d` | 9        |
-| Perfiles   | `<leader>p` | 6        |
-| Buffers    | `<leader>b` | 5        |
-| Navegación | `<leader>j` | 7        |
-| Vista      | `<leader>z` | 3        |
-| Ventanas   | `<leader>w` | 26       |
-| Pestañas   | `<leader>t` | 25       |
-| Diff       | `<leader>D` | 12       |
-| Flash      | Varios      | 9        |
-| Utilidades | Varios      | 2        |
+| Categoría    | Prefijo     | Cantidad |
+| ------------ | ----------- | -------- |
+| Búsquedas    | `<leader>s` | 11       |
+| Git          | `<leader>g` | 12       |
+| Código/LSP   | `<leader>c` | 17       |
+| Debug        | `<leader>d` | 9        |
+| Perfiles     | `<leader>p` | 6        |
+| Buffers      | `<leader>b` | 5        |
+| Navegación   | `<leader>j` | 7        |
+| Vista        | `<leader>z` | 3        |
+| Ventanas     | `<leader>w` | 26       |
+| Pestañas     | `<leader>t` | 25       |
+| Diff         | `<leader>D` | 12       |
+| Búsq. Avanz. | `<leader>S` | 16       |
+| Flash        | Varios      | 9        |
+| Utilidades   | Varios      | 2        |
 
 > **Tip**: Usa `<leader>sk` para ver todos los keymaps disponibles en tiempo real desde dentro de Neovim.
