@@ -9,10 +9,18 @@ M.base46 = {
 	theme = "catppuccin",
   transparency = false,
 
-	-- hl_override = {
-	-- 	Comment = { italic = true },
-	-- 	["@comment"] = { italic = true },
-	-- },
+	hl_override = {
+		Comment = { italic = true },
+		["@comment"] = { italic = true },
+
+    -- Split separators más visibles
+    WinSeparator = { fg = "light_grey", bg = "NONE" },  -- Separadores de ventana
+    VertSplit = { fg = "light_grey", bg = "NONE" },     -- Separadores verticales (fallback)
+
+    -- Bordes de ventanas flotantes más visibles
+    FloatBorder = { fg = "nord_blue", bg = "NONE" },
+    NormalFloat = { bg = "darker_black" },
+	},
 }
 
 -- M.nvdash = { load_on_startup = true }

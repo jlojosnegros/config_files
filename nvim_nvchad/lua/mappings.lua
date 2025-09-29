@@ -390,6 +390,48 @@ map("n", "<leader>ws", function()
   end
 end, opt("Cambiar orientación del split"))
 
+-- Toggle estilos de separadores
+map("n", "<leader>wS", function()
+  local current_vert = vim.opt.fillchars:get().vert
+  if current_vert == "│" then
+    -- Cambiar a separadores más gruesos
+    vim.opt.fillchars = {
+      vert = "┃",      -- Separador vertical grueso
+      horiz = "━",     -- Separador horizontal grueso
+      horizup = "┻",   -- Conexión gruesa
+      horizdown = "┳",
+      vertleft = "┫",
+      vertright = "┣",
+      verthoriz = "╋",
+    }
+    vim.notify("Separadores gruesos activados")
+  elseif current_vert == "┃" then
+    -- Cambiar a separadores de doble línea
+    vim.opt.fillchars = {
+      vert = "║",      -- Separador vertical doble
+      horiz = "═",     -- Separador horizontal doble
+      horizup = "╩",
+      horizdown = "╦",
+      vertleft = "╣",
+      vertright = "╠",
+      verthoriz = "╬",
+    }
+    vim.notify("Separadores dobles activados")
+  else
+    -- Volver a separadores normales
+    vim.opt.fillchars = {
+      vert = "│",
+      horiz = "─",
+      horizup = "┴",
+      horizdown = "┬",
+      vertleft = "┤",
+      vertright = "├",
+      verthoriz = "┼",
+    }
+    vim.notify("Separadores normales activados")
+  end
+end, opt("Toggle estilo de separadores"))
+
 -- ===================================================================
 -- =================== GESTIÓN DE PESTAÑAS (TABS) ===================
 -- ===================================================================
