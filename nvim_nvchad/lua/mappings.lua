@@ -42,7 +42,7 @@ end
 
 map("n", "<leader>sf", tb("find_files"),   opt("Buscar archivos"))
 map("n", "<leader>sg", tb("live_grep"),    opt("Grep en el proyecto"))
-map("n", "<leader>sb", tb("buffers"),      opt("Buffers"))
+map("n", "<leader>bl", tb("buffers"),      opt("Buffers"))
 map("n", "<leader>sh", tb("help_tags"),    opt("Ayuda"))
 map("n", "<leader>sk", tb("keymaps"),      opt("Keymaps"))
 map("n", "<leader>so", tb("oldfiles"),     opt("Archivos recientes"))

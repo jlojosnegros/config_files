@@ -8,7 +8,7 @@
 | ------------ | ------------------------ | --------------------------- |
 | `<leader>sf` | Buscar archivos          | Telescope: find_files       |
 | `<leader>sg` | Grep en vivo             | Buscar texto en el proyecto |
-| `<leader>sb` | Buffers                  | Lista de buffers abiertos   |
+| `<leader>bl` | Buffers                  | Lista de buffers abiertos   |
 | `<leader>sh` | Ayuda                    | Tags de ayuda               |
 | `<leader>sk` | Keymaps                  | Ver todos los atajos        |
 | `<leader>so` | Archivos recientes       | oldfiles                    |
