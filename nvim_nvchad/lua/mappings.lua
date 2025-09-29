@@ -277,18 +277,20 @@ map("i", "jk", "<ESC>")
 -- =================== AÑADIDOS DE NAVEGACIÓN ========================
 -- ===================================================================
 
--- which-key: añade grupos nuevos (Buffers / Jumps) SIN tocar lo anterior
+-- which-key: añade grupos nuevos (Buffers / Jumps / Windows) SIN tocar lo anterior
 do
   local ok, wk = pcall(require, "which-key")
   if ok and wk.add then
     wk.add({
       { "<leader>b", group = "Buffers" },
       { "<leader>j", group = "Jumps" },
+      { "<leader>w", group = "Windows" },
     })
   elseif ok and wk.register then
     wk.register({
       b = { name = "Buffers" },
       j = { name = "Jumps" },
+      w = { name = "Windows" },
     }, { prefix = "<leader>" })
   end
 end
@@ -321,3 +323,68 @@ map("n", "<leader>jt", with_prev_mark(vim.lsp.buf.type_definition),opt("Ir a typ
 map("n", "<leader>zm", "zz",                 opt("Centrar línea (middle)"))
 map("n", "<leader>zt", "zt",                 opt("Línea arriba (top)"))
 map("n", "<leader>zb", "zb",                 opt("Línea abajo (bottom)"))
+
+-- ===================================================================
+-- ================== GESTIÓN DE VENTANAS (SPLITS) ==================
+-- ===================================================================
+
+-- Crear splits
+map("n", "<leader>wv", ":vsplit<CR>",        opt("Split vertical"))
+map("n", "<leader>wh", ":split<CR>",         opt("Split horizontal"))
+map("n", "<leader>wt", ":tabnew<CR>",        opt("Nueva pestaña"))
+
+-- Navegación entre ventanas
+map("n", "<leader>ww", "<C-w>w",             opt("Siguiente ventana"))
+map("n", "<leader>wj", "<C-w>j",             opt("Ventana abajo"))
+map("n", "<leader>wk", "<C-w>k",             opt("Ventana arriba"))
+map("n", "<leader>wl", "<C-w>l",             opt("Ventana derecha"))
+map("n", "<leader>wJ", "<C-w>h",             opt("Ventana izquierda"))
+
+-- Navegación alternativa con Ctrl (más rápida)
+map("n", "<C-h>", "<C-w>h",                  opt("Ir a ventana izquierda"))
+map("n", "<C-j>", "<C-w>j",                  opt("Ir a ventana abajo"))
+map("n", "<C-k>", "<C-w>k",                  opt("Ir a ventana arriba"))
+map("n", "<C-l>", "<C-w>l",                  opt("Ir a ventana derecha"))
+
+-- Redimensionar ventanas
+map("n", "<leader>w=", "<C-w>=",             opt("Igualar tamaño de ventanas"))
+map("n", "<leader>w+", ":resize +5<CR>",     opt("Aumentar altura"))
+map("n", "<leader>w-", ":resize -5<CR>",     opt("Disminuir altura"))
+map("n", "<leader>w>", ":vertical resize +5<CR>", opt("Aumentar ancho"))
+map("n", "<leader>w<", ":vertical resize -5<CR>", opt("Disminuir ancho"))
+
+-- Gestión de ventanas
+map("n", "<leader>wc", "<C-w>c",             opt("Cerrar ventana actual"))
+map("n", "<leader>wo", "<C-w>o",             opt("Cerrar otras ventanas (solo actual)"))
+map("n", "<leader>wx", ":close<CR>",         opt("Cerrar ventana"))
+map("n", "<leader>wm", function()
+  -- Toggle maximize: si hay más de una ventana, maximiza; si no, restaura
+  if #vim.api.nvim_list_wins() > 1 then
+    vim.cmd("only")  -- Maximizar
+  else
+    vim.cmd("vsplit") -- Restaurar con split vertical
+  end
+end, opt("Toggle maximizar ventana"))
+
+-- Mover ventanas de posición
+map("n", "<leader>wH", "<C-w>H",             opt("Mover ventana a la izquierda"))
+map("n", "<leader>wK", "<C-w>K",             opt("Mover ventana arriba"))
+map("n", "<leader>wL", "<C-w>L",             opt("Mover ventana a la derecha"))
+map("n", "<leader>wM", "<C-w>J",             opt("Mover ventana abajo"))
+
+-- Rotar ventanas
+map("n", "<leader>wr", "<C-w>r",             opt("Rotar ventanas hacia abajo/derecha"))
+map("n", "<leader>wR", "<C-w>R",             opt("Rotar ventanas hacia arriba/izquierda"))
+
+-- Cambiar orientación de splits
+map("n", "<leader>wT", "<C-w>T",             opt("Mover ventana a nueva pestaña"))
+map("n", "<leader>ws", function()
+  -- Cambiar de horizontal a vertical o viceversa
+  local win_width = vim.api.nvim_win_get_width(0)
+  local win_height = vim.api.nvim_win_get_height(0)
+  if win_width > win_height * 2 then
+    vim.cmd("wincmd K")  -- Cambiar a horizontal
+  else
+    vim.cmd("wincmd H")  -- Cambiar a vertical
+  end
+end, opt("Cambiar orientación del split"))

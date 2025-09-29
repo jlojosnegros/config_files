@@ -111,6 +111,57 @@
 | `<leader>zt` | Línea arriba  | Top         |
 | `<leader>zb` | Línea abajo   | Bottom      |
 
+### **🪟 VENTANAS (SPLITS) - `<leader>w`**
+
+#### **Crear Splits**
+| Tecla        | Acción           | Descripción            |
+| ------------ | ---------------- | ---------------------- |
+| `<leader>wv` | Split vertical   | Dividir verticalmente  |
+| `<leader>wh` | Split horizontal | Dividir horizontalmente|
+| `<leader>wt` | Nueva pestaña    | Crear nueva tab        |
+
+#### **Navegación**
+| Tecla        | Acción             | Descripción           |
+| ------------ | ------------------ | --------------------- |
+| `<leader>ww` | Siguiente ventana  | Ciclar ventanas       |
+| `<leader>wj` | Ventana abajo      | Ir hacia abajo        |
+| `<leader>wk` | Ventana arriba     | Ir hacia arriba       |
+| `<leader>wl` | Ventana derecha    | Ir hacia la derecha   |
+| `<leader>wJ` | Ventana izquierda  | Ir hacia la izquierda |
+| `<C-h>`      | Ir izquierda       | Navegación rápida     |
+| `<C-j>`      | Ir abajo           | Navegación rápida     |
+| `<C-k>`      | Ir arriba          | Navegación rápida     |
+| `<C-l>`      | Ir derecha         | Navegación rápida     |
+
+#### **Redimensionar**
+| Tecla        | Acción               | Descripción              |
+| ------------ | -------------------- | ------------------------ |
+| `<leader>w=` | Igualar tamaños      | Mismo tamaño todas       |
+| `<leader>w+` | Aumentar altura      | +5 líneas                |
+| `<leader>w-` | Disminuir altura     | -5 líneas                |
+| `<leader>w>` | Aumentar ancho       | +5 columnas              |
+| `<leader>w<` | Disminuir ancho      | -5 columnas              |
+
+#### **Gestión**
+| Tecla        | Acción               | Descripción              |
+| ------------ | -------------------- | ------------------------ |
+| `<leader>wc` | Cerrar ventana       | Cerrar actual            |
+| `<leader>wo` | Cerrar otras         | Solo mantener actual     |
+| `<leader>wx` | Cerrar ventana       | Alternativo              |
+| `<leader>wm` | Toggle maximizar     | Maximizar/restaurar      |
+
+#### **Mover y Rotar**
+| Tecla        | Acción               | Descripción              |
+| ------------ | -------------------- | ------------------------ |
+| `<leader>wH` | Mover izquierda      | Reposicionar ventana     |
+| `<leader>wK` | Mover arriba         | Reposicionar ventana     |
+| `<leader>wL` | Mover derecha        | Reposicionar ventana     |
+| `<leader>wM` | Mover abajo          | Reposicionar ventana     |
+| `<leader>wr` | Rotar hacia derecha  | Cambiar orden            |
+| `<leader>wR` | Rotar hacia izquierda| Cambiar orden            |
+| `<leader>wT` | Mover a nueva tab    | Convertir en pestaña     |
+| `<leader>ws` | Cambiar orientación  | Horizontal ↔ Vertical    |
+
 ### **⚡ FLASH (Movimiento rápido)**
 
 | Tecla   | Modo            | Acción            |
@@ -130,7 +181,7 @@
 
 ---
 
-**Total: 90 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
+**Total: 115 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
 
 ## Notas Adicionales
 
@@ -143,7 +194,7 @@
 
 | Categoría  | Prefijo     | Cantidad |
 | ---------- | ----------- | -------- |
-| Búsquedas  | `<leader>s` | 12       |
+| Búsquedas  | `<leader>s` | 11       |
 | Git        | `<leader>g` | 12       |
 | Código/LSP | `<leader>c` | 17       |
 | Debug      | `<leader>d` | 9        |
@@ -151,6 +202,7 @@
 | Buffers    | `<leader>b` | 5        |
 | Navegación | `<leader>j` | 7        |
 | Vista      | `<leader>z` | 3        |
+| Ventanas   | `<leader>w` | 25       |
 | Flash      | Varios      | 9        |
 | Utilidades | Varios      | 2        |
 
