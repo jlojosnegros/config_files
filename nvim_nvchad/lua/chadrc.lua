@@ -20,14 +20,20 @@ M.base46 = {
     -- Bordes de ventanas flotantes más visibles
     FloatBorder = { fg = "nord_blue", bg = "NONE" },
     NormalFloat = { bg = "darker_black" },
+
+    -- Winbar (breadcrumbs + filename en cada ventana)
+    WinBar = { fg = "light_grey", bg = "NONE" },
+    WinBarPath = { fg = "blue", bg = "NONE", bold = true },
 	},
 }
 
 -- M.nvdash = { load_on_startup = true }
--- M.ui = {
---       tabufline = {
---          lazyload = false
---      }
--- }
+
+-- Deshabilitar tabufline de NvChad porque usamos bufferline.nvim
+M.ui = {
+  tabufline = {
+    enabled = false,
+  },
+}
 
 return M

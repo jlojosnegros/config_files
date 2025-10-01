@@ -47,6 +47,7 @@
 | `gr`         | Referencias            | Ver referencias         |
 | `<leader>cr` | Rename                 | Renombrar símbolo       |
 | `<leader>ca` | Code action            | Acciones de código      |
+| `<leader>cn` | Navbuddy               | Navegador de símbolos   |
 | `<leader>cf` | Formatear              | Formatear buffer        |
 | `<leader>cF` | Toggle format (buffer) | Auto-formato buffer     |
 | `<leader>cG` | Toggle format (global) | Auto-formato global     |
@@ -83,6 +84,7 @@
 
 ### **📁 BUFFERS - `<leader>b`**
 
+#### **Navegación Básica**
 | Tecla        | Acción           | Descripción      |
 | ------------ | ---------------- | ---------------- |
 | `<leader>bn` | Siguiente buffer | Navegar adelante |
@@ -90,6 +92,42 @@
 | `<leader>bd` | Cerrar buffer    | Cerrar actual    |
 | `<leader>bo` | Cerrar otros     | Solo el actual   |
 | `<leader>bb` | Alternar buffer  | Último usado     |
+| `<leader>bl` | Lista buffers    | Telescope picker |
+
+### **📊 BUFFERLINE (Navegación Avanzada) - `<leader>B`**
+
+#### **Navegación por Número**
+| Tecla        | Acción           | Descripción              |
+| ------------ | ---------------- | ------------------------ |
+| `<leader>B1` | Ir a buffer 1    | Salto directo al buffer 1|
+| `<leader>B2` | Ir a buffer 2    | Salto directo al buffer 2|
+| `<leader>B3` | Ir a buffer 3    | Salto directo al buffer 3|
+| `<leader>B4` | Ir a buffer 4    | Salto directo al buffer 4|
+| `<leader>B5` | Ir a buffer 5    | Salto directo al buffer 5|
+| `<leader>B6` | Ir a buffer 6    | Salto directo al buffer 6|
+| `<leader>B7` | Ir a buffer 7    | Salto directo al buffer 7|
+| `<leader>B8` | Ir a buffer 8    | Salto directo al buffer 8|
+| `<leader>B9` | Ir a buffer 9    | Salto directo al buffer 9|
+| `]b`         | Siguiente buffer | Cycle adelante           |
+| `[b`         | Buffer anterior  | Cycle atrás              |
+| `<leader>Bf` | Primer buffer    | Ir al primero            |
+| `<leader>BL` | Último buffer    | Ir al último             |
+
+#### **Gestión de Buffers**
+| Tecla        | Acción                    | Descripción                |
+| ------------ | ------------------------- | -------------------------- |
+| `<leader>Bp` | Seleccionar buffer        | Picker interactivo         |
+| `<leader>BC` | Seleccionar para cerrar   | Picker para cerrar         |
+| `<leader>Bc` | Cerrar otros buffers      | Mantener solo el actual    |
+| `<leader>Bl` | Cerrar buffers izquierda  | Cerrar todos a la izquierda|
+| `<leader>Br` | Cerrar buffers derecha    | Cerrar todos a la derecha  |
+
+#### **Organización**
+| Tecla        | Acción                    | Descripción                |
+| ------------ | ------------------------- | -------------------------- |
+| `<leader>B>` | Mover buffer a derecha    | Reordenar en bufferline    |
+| `<leader>B<` | Mover buffer a izquierda  | Reordenar en bufferline    |
+| `<leader>Bg` | Toggle agrupación         | Agrupar/desagrupar buffers |
 
 ### **🧭 NAVEGACIÓN - `<leader>j`**
 
@@ -283,14 +321,14 @@
 
 ---
 
-**Total: 168 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
+**Total: 193 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
 
 ## Notas Adicionales
 
 - **Tecla Líder**: `<Espacio>` (Space)
 - **Configuración base**: NvChad con personalizaciones
 - **Organización**: Prefijos lógicos para cada categoría de funciones
-- **Herramientas principales**: Telescope, LSP, DAP, Gitsigns, Flash
+- **Herramientas principales**: Telescope, LSP, DAP, Gitsigns, Flash, Bufferline, Navbuddy
 
 ### Atajos por Categoría
 
@@ -298,10 +336,11 @@
 | ------------ | ----------- | -------- |
 | Búsquedas    | `<leader>s` | 11       |
 | Git          | `<leader>g` | 12       |
-| Código/LSP   | `<leader>c` | 17       |
+| Código/LSP   | `<leader>c` | 18       |
 | Debug        | `<leader>d` | 9        |
 | Perfiles     | `<leader>p` | 6        |
-| Buffers      | `<leader>b` | 5        |
+| Buffers      | `<leader>b` | 6        |
+| Bufferline   | `<leader>B` | 24       |
 | Navegación   | `<leader>j` | 7        |
 | Vista        | `<leader>z` | 3        |
 | Ventanas     | `<leader>w` | 26       |
@@ -310,5 +349,12 @@
 | Búsq. Avanz. | `<leader>S` | 16       |
 | Flash        | Varios      | 9        |
 | Utilidades   | Varios      | 2        |
+
+### Nuevas Funcionalidades (Bufferline + Navbuddy)
+
+- **Bufferline**: Barra superior con todos los buffers visibles y navegación mejorada
+- **Navbuddy**: Navegador visual jerárquico de símbolos LSP (`<leader>cn`)
+- **Winbar**: Cada ventana muestra breadcrumbs LSP + nombre del archivo
+- **Navegación por número**: `<leader>B1-9` para saltar directamente a buffers
 
 > **Tip**: Usa `<leader>sk` para ver todos los keymaps disponibles en tiempo real desde dentro de Neovim.

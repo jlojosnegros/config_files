@@ -1181,3 +1181,56 @@ end, opt("Info de búsqueda actual"))
 map("n", "<leader>SR", function()
   refresh_search()
 end, opt("Refrescar búsqueda actual"))
+
+-- ===================================================================
+-- =================== BUFFERLINE (NAVEGACIÓN DE BUFFERS) ============
+-- ===================================================================
+
+-- Registrar grupo en which-key
+do
+  local ok, wk = pcall(require, "which-key")
+  if ok and wk.add then
+    wk.add({
+      { "<leader>B", group = "Bufferline" },
+    })
+  elseif ok and wk.register then
+    wk.register({
+      B = { name = "Bufferline" },
+    }, { prefix = "<leader>" })
+  end
+end
+
+-- Navegar entre buffers con números (usa B mayúscula para evitar conflicto con tabs)
+for i = 1, 9 do
+  map("n", "<leader>B" .. i, function()
+    require("bufferline").go_to(i, true)
+  end, opt("Ir a buffer " .. i))
+end
+
+-- Cycle entre buffers (]b y [b son estándar en Neovim)
+map("n", "]b", "<cmd>BufferLineCycleNext<cr>", opt("Siguiente buffer (bufferline)"))
+map("n", "[b", "<cmd>BufferLineCyclePrev<cr>", opt("Buffer anterior (bufferline)"))
+
+-- Mover buffers de posición
+map("n", "<leader>B>", "<cmd>BufferLineMoveNext<cr>", opt("Mover buffer a la derecha"))
+map("n", "<leader>B<", "<cmd>BufferLineMovePrev<cr>", opt("Mover buffer a la izquierda"))
+
+-- Seleccionar buffer interactivamente
+map("n", "<leader>Bp", "<cmd>BufferLinePick<cr>", opt("Seleccionar buffer interactivamente"))
+map("n", "<leader>BC", "<cmd>BufferLinePickClose<cr>", opt("Seleccionar buffer para cerrar"))
+
+-- Cerrar buffers
+map("n", "<leader>Bc", "<cmd>BufferLineCloseOthers<cr>", opt("Cerrar otros buffers"))
+map("n", "<leader>Bl", "<cmd>BufferLineCloseLeft<cr>", opt("Cerrar buffers a la izquierda"))
+map("n", "<leader>Br", "<cmd>BufferLineCloseRight<cr>", opt("Cerrar buffers a la derecha"))
+
+-- Ir al primer/último buffer
+map("n", "<leader>Bf", "<cmd>BufferLineGoToBuffer 1<cr>", opt("Ir al primer buffer"))
+map("n", "<leader>BL", "<cmd>BufferLineGoToBuffer -1<cr>", opt("Ir al último buffer"))
+
+-- Agrupar buffers (toggle)
+map("n", "<leader>Bg", "<cmd>BufferLineGroupToggle<cr>", opt("Toggle agrupación de buffers"))
+
+-- Nota: Los keymaps de navegación básica (<leader>bn, <leader>bp, <leader>bd, etc.)
+-- ya existen más arriba en la sección de Buffers y siguen funcionando con cualquier
+-- plugin de buffers. Los de bufferline son adicionales y más avanzados.

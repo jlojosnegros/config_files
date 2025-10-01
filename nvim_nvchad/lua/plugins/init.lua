@@ -1,7 +1,8 @@
 return {
-    -- Importa tus specs separados
+  -- Importa tus specs separados
   { import = "plugins.lsp" },
   { import = "plugins.format-lint-dap" },
+  { import = "plugins.ui-navigation" },
   -- start: this was uncomment
   -- {
   --   "stevearc/conform.nvim",
