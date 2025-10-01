@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/jojosneg/source/mine/config_files/git/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
