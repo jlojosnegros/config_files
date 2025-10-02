@@ -14,6 +14,28 @@ return {
       yaml = { "yamlfmt" },
     })
 
+    -- Configuración personalizada de yamlfmt para que sea compatible con yamllint
+    opts.formatters = opts.formatters or {}
+    opts.formatters.yamlfmt = {
+      prepend_args = function(self, ctx)
+        -- Buscar .yamlfmt en el proyecto
+        local yamlfmt_config = vim.fs.find(".yamlfmt", {
+          upward = true,
+          path = vim.fs.dirname(ctx.filename),
+        })[1]
+
+        if yamlfmt_config then
+          return { "-conf", yamlfmt_config }
+        end
+
+        -- Configuración por defecto compatible con yamllint común
+        return {
+          "-formatter",
+          "indent=2,include_document_start=true,retain_line_breaks=true",
+        }
+      end,
+    }
+
     -- Respeta toggles global/buffer:
     --   vim.g.disable_autoformat = true        -> desactiva para todos
     --   vim.b[bufnr].disable_autoformat = true -> desactiva solo ese buffer

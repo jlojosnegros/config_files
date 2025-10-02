@@ -1,0 +1,15 @@
+# Configuración de ejemplo para yamlfmt
+# Renombra este archivo a .yamlfmt para usarlo
+# Ubicación: raíz del proyecto
+
+# Formateo compatible con yamllint por defecto
+formatter:
+  type: basic
+  indent: 2
+  include_document_start: true
+  retain_line_breaks: true
+  max_line_length: 120
+  scan_folded_as_literal: false
+  indentless_arrays: false
+  drop_merge_tag: false
+  pad_line_comments: 2

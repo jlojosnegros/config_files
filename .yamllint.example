@@ -1,0 +1,56 @@
+---
+# Configuración de ejemplo para yamllint
+# Renombra este archivo a .yamllint para usarlo
+# Ubicación: raíz del proyecto
+
+extends: default
+
+rules:
+  # Indentación de 2 espacios (compatible con yamlfmt default)
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+
+  # Longitud de línea: 120 caracteres (ajusta según necesites)
+  line-length:
+    max: 120
+    level: warning
+
+  # Permitir documento sin --- al inicio (ajusta según preferencias)
+  document-start:
+    present: true
+
+  # Trailing spaces
+  trailing-spaces: enable
+
+  # Líneas en blanco
+  empty-lines:
+    max: 2
+
+  # Llaves y corchetes
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+
+  # Comentarios
+  comments:
+    min-spaces-from-content: 2
+
+  # Permitir claves duplicadas solo si son diferentes (común en Kubernetes/Tekton)
+  key-duplicates: enable
+
+  # Truthy values (permitir yes/no/true/false)
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no']
+    check-keys: false
+
+# Ignorar archivos si es necesario
+ignore: |
+  .github/
+  node_modules/
+  venv/
