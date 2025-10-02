@@ -14,7 +14,6 @@ do
   local ok, wk = pcall(require, "which-key")
   if ok and wk.add then
     wk.add({
-      { "<leader>s", group = "Search (Telescope)" },
       { "<leader>g", group = "Git" },
       { "<leader>c", group = "Code" },
       { "<leader>d", group = "Debug (DAP)" },
@@ -22,7 +21,6 @@ do
     })
   elseif ok and wk.register then
     wk.register({
-      s = { name = "Search (Telescope)" },
       g = { name = "Git" },
       c = { name = "Code" },
       d = { name = "Debug (DAP)" },
@@ -32,6 +30,9 @@ do
 end
 
 -- ========= Telescope =========
+-- Nota: NvChad ya define <leader>ff (find_files), <leader>fw (live_grep), <leader>fb (buffers), etc.
+-- Aquí solo añadimos los que no están en NvChad base o usamos prefijos alternativos para organización
+
 local function tb(fn, opts)
   return function()
     local ok, builtin = pcall(require, "telescope.builtin")
@@ -40,19 +41,15 @@ local function tb(fn, opts)
   end
 end
 
-map("n", "<leader>sf", tb("find_files"),   opt("Buscar archivos"))
-map("n", "<leader>sg", tb("live_grep"),    opt("Grep en el proyecto"))
-map("n", "<leader>bl", tb("buffers"),      opt("Buffers"))
-map("n", "<leader>sh", tb("help_tags"),    opt("Ayuda"))
-map("n", "<leader>sk", tb("keymaps"),      opt("Keymaps"))
-map("n", "<leader>so", tb("oldfiles"),     opt("Archivos recientes"))
-map("n", "<leader>sc", tb("commands"),     opt("Comandos"))
-map("n", "<leader>sd", tb("diagnostics", { bufnr = 0 }), opt("Diag. del buffer"))
-map("n", "<leader>sD", tb("diagnostics"),               opt("Diag. del workspace"))
+-- Keymaps adicionales de Telescope (los básicos ya están en NvChad: ff, fw, fb, fh, fo)
+map("n", "<leader>fk", tb("keymaps"),      opt("Keymaps"))
+map("n", "<leader>fc", tb("commands"),     opt("Comandos"))
+map("n", "<leader>fd", tb("diagnostics", { bufnr = 0 }), opt("Diag. del buffer"))
+map("n", "<leader>fD", tb("diagnostics"),               opt("Diag. del workspace"))
 -- LSP pickers útiles (si hay servidor activo):
-map("n", "<leader>sr", tb("lsp_references"),        opt("LSP Referencias"))
-map("n", "<leader>ss", tb("lsp_document_symbols"),  opt("Símbolos del buffer"))
-map("n", "<leader>sS", tb("lsp_workspace_symbols"), opt("Símbolos del workspace"))
+map("n", "<leader>fr", tb("lsp_references"),        opt("LSP Referencias"))
+map("n", "<leader>fs", tb("lsp_document_symbols"),  opt("Símbolos del buffer"))
+map("n", "<leader>fS", tb("lsp_workspace_symbols"), opt("Símbolos del workspace"))
 
 -- ========= Git (Telescope + Gitsigns) =========
 map("n", "<leader>gs", tb("git_status"),   opt("Git status (Telescope)"))
@@ -277,12 +274,13 @@ map("i", "jk", "<ESC>")
 -- =================== AÑADIDOS DE NAVEGACIÓN ========================
 -- ===================================================================
 
--- which-key: añade grupos nuevos (Buffers / Jumps / Windows / Tabs / Diff / Search / Recent) SIN tocar lo anterior
+-- which-key: añadir grupos adicionales (NvChad ya define algunos)
 do
   local ok, wk = pcall(require, "which-key")
   if ok and wk.add then
     wk.add({
       { "<leader>b", group = "Buffers" },
+      { "<leader>f", group = "Find (Telescope)" },
       { "<leader>j", group = "Jumps" },
       { "<leader>w", group = "Windows" },
       { "<leader>t", group = "Tabs" },
@@ -293,6 +291,7 @@ do
   elseif ok and wk.register then
     wk.register({
       b = { name = "Buffers" },
+      f = { name = "Find (Telescope)" },
       j = { name = "Jumps" },
       w = { name = "Windows" },
       t = { name = "Tabs" },

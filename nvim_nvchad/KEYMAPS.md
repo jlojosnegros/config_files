@@ -2,22 +2,33 @@
 
 ## **Tecla Líder: `<Espacio>`**
 
-### **🔍 BÚSQUEDAS (Telescope) - `<leader>s`**
+### **🔍 BÚSQUEDAS (Telescope) - `<leader>f`**
 
-| Tecla        | Acción                   | Descripción                 |
-| ------------ | ------------------------ | --------------------------- |
-| `<leader>sf` | Buscar archivos          | Telescope: find_files       |
-| `<leader>sg` | Grep en vivo             | Buscar texto en el proyecto |
-| `<leader>bl` | Buffers                  | Lista de buffers abiertos   |
-| `<leader>sh` | Ayuda                    | Tags de ayuda               |
-| `<leader>sk` | Keymaps                  | Ver todos los atajos        |
-| `<leader>so` | Archivos recientes       | oldfiles                    |
-| `<leader>sc` | Comandos                 | Lista de comandos           |
-| `<leader>sd` | Diagnósticos (buffer)    | Del buffer actual           |
-| `<leader>sD` | Diagnósticos (workspace) | De todo el workspace        |
-| `<leader>sr` | Referencias LSP          | Referencias del símbolo     |
-| `<leader>ss` | Símbolos (buffer)        | Símbolos del archivo        |
-| `<leader>sS` | Símbolos (workspace)     | Símbolos del proyecto       |
+#### **Búsquedas Básicas (NvChad)**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>ff` | Buscar archivos          | find_files (incluye ocultos)   |
+| `<leader>fa` | Buscar TODOS archivos    | Incluye .git y node_modules    |
+| `<leader>fw` | Grep en vivo             | Buscar texto en proyecto       |
+| `<leader>fb` | Buffers                  | Lista de buffers abiertos      |
+| `<leader>fh` | Ayuda                    | Tags de ayuda                  |
+| `<leader>fo` | Archivos recientes       | oldfiles                       |
+| `<leader>fz` | Buscar en buffer actual  | Fuzzy find en archivo actual   |
+| `<leader>ma` | Marcas                   | Telescope marks                |
+| `<leader>th` | Temas                    | Selector de temas NvChad       |
+
+#### **Búsquedas Avanzadas (Personalizadas)**
+| Tecla        | Acción                   | Descripción                    |
+| ------------ | ------------------------ | ------------------------------ |
+| `<leader>fk` | Keymaps                  | Ver todos los atajos           |
+| `<leader>fc` | Comandos                 | Lista de comandos              |
+| `<leader>fd` | Diagnósticos (buffer)    | Del buffer actual              |
+| `<leader>fD` | Diagnósticos (workspace) | De todo el workspace           |
+| `<leader>fr` | Referencias LSP          | Referencias del símbolo        |
+| `<leader>fs` | Símbolos (buffer)        | Símbolos del archivo           |
+| `<leader>fS` | Símbolos (workspace)     | Símbolos del proyecto          |
+
+> **Nota**: Los directorios ocultos (`.tekton`, `.devcontainer`, etc.) ahora son visibles en `<leader>ff` y `<leader>fw`.
 
 ### **🔄 GIT - `<leader>g`**
 
@@ -329,7 +340,7 @@
 
 ---
 
-**Total: 194 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
+**Total: 199 atajos de teclado** (incluye NvChad base + personalizados) organizados en grupos lógicos para máxima productividad.
 
 ## Notas Adicionales
 
@@ -342,7 +353,7 @@
 
 | Categoría       | Prefijo     | Cantidad |
 | --------------- | ----------- | -------- |
-| Búsquedas       | `<leader>s` | 11       |
+| Búsquedas       | `<leader>f` | 16       |
 | Git             | `<leader>g` | 12       |
 | Código/LSP      | `<leader>c` | 18       |
 | Debug           | `<leader>d` | 9        |

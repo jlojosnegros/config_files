@@ -1,5 +1,13 @@
 -- Plugins para mejorar la navegación y visualización de buffers
 return {
+  -- Telescope: Override para mostrar archivos ocultos
+  {
+    "nvim-telescope/telescope.nvim",
+    opts = function()
+      return require("configs.telescope")
+    end,
+  },
+
   -- Bufferline: Mejor visualización de buffers en la parte superior
   {
     "akinsho/bufferline.nvim",
