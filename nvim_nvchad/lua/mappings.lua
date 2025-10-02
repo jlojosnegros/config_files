@@ -277,7 +277,7 @@ map("i", "jk", "<ESC>")
 -- =================== AÑADIDOS DE NAVEGACIÓN ========================
 -- ===================================================================
 
--- which-key: añade grupos nuevos (Buffers / Jumps / Windows / Tabs / Diff / Search) SIN tocar lo anterior
+-- which-key: añade grupos nuevos (Buffers / Jumps / Windows / Tabs / Diff / Search / Recent) SIN tocar lo anterior
 do
   local ok, wk = pcall(require, "which-key")
   if ok and wk.add then
@@ -288,6 +288,7 @@ do
       { "<leader>t", group = "Tabs" },
       { "<leader>D", group = "Diff" },
       { "<leader>S", group = "Search Advanced" },
+      { "<leader>R", group = "Recent Files" },
     })
   elseif ok and wk.register then
     wk.register({
@@ -297,6 +298,7 @@ do
       t = { name = "Tabs" },
       D = { name = "Diff" },
       S = { name = "Search Advanced" },
+      R = { name = "Recent Files" },
     }, { prefix = "<leader>" })
   end
 end
@@ -1234,3 +1236,18 @@ map("n", "<leader>Bg", "<cmd>BufferLineGroupToggle<cr>", opt("Toggle agrupación
 -- Nota: Los keymaps de navegación básica (<leader>bn, <leader>bp, <leader>bd, etc.)
 -- ya existen más arriba en la sección de Buffers y siguen funcionando con cualquier
 -- plugin de buffers. Los de bufferline son adicionales y más avanzados.
+
+-- ===================================================================
+-- =================== ARCHIVOS RECIENTES POR ÁRBOL =================
+-- ===================================================================
+
+-- Cargar módulo de archivos recientes
+local recent_files = require("recent_files")
+
+-- Activar tracking automático
+recent_files.setup()
+
+-- Mostrar archivos recientes del árbol actual
+map("n", "<leader>R", function()
+  recent_files.show_recent_files()
+end, opt("Archivos recientes (árbol actual)"))

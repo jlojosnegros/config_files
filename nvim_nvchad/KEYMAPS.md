@@ -302,6 +302,14 @@
 | `q`     | Cerrar                   | Cerrar ventana de búsqueda     |
 | `r`     | Refrescar                | Actualizar búsqueda            |
 
+### **📂 ARCHIVOS RECIENTES - `<leader>R`**
+
+| Tecla       | Acción                  | Descripción                           |
+| ----------- | ----------------------- | ------------------------------------- |
+| `<leader>R` | Archivos recientes      | Últimos 10 archivos del árbol actual  |
+
+> **Árbol de directorios**: Se detecta automáticamente la raíz del repositorio git o el directorio del proyecto. Cada árbol mantiene su propio historial de 10 archivos recientes con información de tiempo transcurrido.
+
 ### **⚡ FLASH (Movimiento rápido)**
 
 | Tecla   | Modo            | Acción            |
@@ -321,7 +329,7 @@
 
 ---
 
-**Total: 193 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
+**Total: 194 atajos de teclado personalizados** organizados en grupos lógicos para máxima productividad.
 
 ## Notas Adicionales
 
@@ -332,29 +340,31 @@
 
 ### Atajos por Categoría
 
-| Categoría    | Prefijo     | Cantidad |
-| ------------ | ----------- | -------- |
-| Búsquedas    | `<leader>s` | 11       |
-| Git          | `<leader>g` | 12       |
-| Código/LSP   | `<leader>c` | 18       |
-| Debug        | `<leader>d` | 9        |
-| Perfiles     | `<leader>p` | 6        |
-| Buffers      | `<leader>b` | 6        |
-| Bufferline   | `<leader>B` | 24       |
-| Navegación   | `<leader>j` | 7        |
-| Vista        | `<leader>z` | 3        |
-| Ventanas     | `<leader>w` | 26       |
-| Pestañas     | `<leader>t` | 25       |
-| Diff         | `<leader>D` | 12       |
-| Búsq. Avanz. | `<leader>S` | 16       |
-| Flash        | Varios      | 9        |
-| Utilidades   | Varios      | 2        |
+| Categoría       | Prefijo     | Cantidad |
+| --------------- | ----------- | -------- |
+| Búsquedas       | `<leader>s` | 11       |
+| Git             | `<leader>g` | 12       |
+| Código/LSP      | `<leader>c` | 18       |
+| Debug           | `<leader>d` | 9        |
+| Perfiles        | `<leader>p` | 6        |
+| Buffers         | `<leader>b` | 6        |
+| Bufferline      | `<leader>B` | 24       |
+| Navegación      | `<leader>j` | 7        |
+| Vista           | `<leader>z` | 3        |
+| Ventanas        | `<leader>w` | 26       |
+| Pestañas        | `<leader>t` | 25       |
+| Diff            | `<leader>D` | 12       |
+| Búsq. Avanz.    | `<leader>S` | 16       |
+| Archivos Recien.| `<leader>R` | 1        |
+| Flash           | Varios      | 9        |
+| Utilidades      | Varios      | 2        |
 
-### Nuevas Funcionalidades (Bufferline + Navbuddy)
+### Nuevas Funcionalidades
 
 - **Bufferline**: Barra superior con todos los buffers visibles y navegación mejorada
 - **Navbuddy**: Navegador visual jerárquico de símbolos LSP (`<leader>cn`)
 - **Winbar**: Cada ventana muestra breadcrumbs LSP + nombre del archivo
 - **Navegación por número**: `<leader>B1-9` para saltar directamente a buffers
+- **Archivos Recientes**: Sistema de rastreo por árbol de directorios (`<leader>R`) que mantiene los últimos 10 archivos por proyecto/repo git con información de tiempo
 
 > **Tip**: Usa `<leader>sk` para ver todos los keymaps disponibles en tiempo real desde dentro de Neovim.
