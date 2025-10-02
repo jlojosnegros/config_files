@@ -3,11 +3,15 @@
 
 local M = {}
 
+-- Ruta del archivo de persistencia
+local data_path = vim.fn.stdpath("data") .. "/recent_files.json"
+
 -- Estado del módulo
 local state = {
   -- Estructura: { [git_root] = { {file=path, timestamp=num}, ... } }
   files_by_tree = {},
   max_files_per_tree = 10,
+  max_trees = 20, -- Limitar el número de árboles guardados
 }
 
 -- Función para obtener la raíz del repositorio git o el directorio actual
@@ -74,6 +78,89 @@ function M.track_file(filepath)
   -- Limitar a max_files_per_tree
   while #files > state.max_files_per_tree do
     table.remove(files)
+  end
+
+  -- Guardar cambios a disco
+  M.save_to_disk()
+end
+
+-- Función para guardar el estado a disco
+function M.save_to_disk()
+  -- Convertir a formato serializable
+  local data = {
+    version = 1,
+    trees = {},
+  }
+
+  -- Limitar el número de árboles guardados
+  local tree_count = 0
+  for tree_root, files in pairs(state.files_by_tree) do
+    if tree_count >= state.max_trees then
+      break
+    end
+
+    -- Solo guardar archivos que aún existen
+    local valid_files = {}
+    for _, entry in ipairs(files) do
+      if vim.loop.fs_stat(entry.file) then
+        table.insert(valid_files, entry)
+      end
+    end
+
+    if #valid_files > 0 then
+      data.trees[tree_root] = valid_files
+      tree_count = tree_count + 1
+    end
+  end
+
+  -- Serializar a JSON
+  local ok, json_str = pcall(vim.json.encode, data)
+  if not ok then
+    vim.notify("Error al serializar historial de archivos recientes", vim.log.levels.ERROR)
+    return
+  end
+
+  -- Escribir a archivo
+  local file = io.open(data_path, "w")
+  if file then
+    file:write(json_str)
+    file:close()
+  else
+    vim.notify("Error al guardar historial de archivos recientes", vim.log.levels.ERROR)
+  end
+end
+
+-- Función para cargar el estado desde disco
+function M.load_from_disk()
+  -- Leer archivo
+  local file = io.open(data_path, "r")
+  if not file then
+    -- No hay archivo guardado aún, es normal en primera ejecución
+    return
+  end
+
+  local json_str = file:read("*all")
+  file:close()
+
+  -- Deserializar JSON
+  local ok, data = pcall(vim.json.decode, json_str)
+  if not ok or not data or not data.trees then
+    vim.notify("Error al cargar historial de archivos recientes", vim.log.levels.WARN)
+    return
+  end
+
+  -- Restaurar estado
+  state.files_by_tree = data.trees or {}
+
+  -- Limpiar archivos que ya no existen
+  for tree_root, files in pairs(state.files_by_tree) do
+    local valid_files = {}
+    for _, entry in ipairs(files) do
+      if vim.loop.fs_stat(entry.file) then
+        table.insert(valid_files, entry)
+      end
+    end
+    state.files_by_tree[tree_root] = valid_files
   end
 end
 
@@ -179,12 +266,35 @@ end
 
 -- Setup automático para rastrear archivos
 function M.setup()
+  -- Cargar historial desde disco al iniciar
+  M.load_from_disk()
+
   -- Autocomando para rastrear archivos al abrirlos
   vim.api.nvim_create_autocmd({ "BufEnter", "BufReadPost" }, {
     group = vim.api.nvim_create_augroup("RecentFilesTracker", { clear = true }),
     callback = function()
       local filepath = vim.api.nvim_buf_get_name(0)
       M.track_file(filepath)
+    end,
+  })
+
+  -- Guardar periódicamente (cada 30 segundos si hay cambios)
+  local timer = vim.loop.new_timer()
+  if timer then
+    timer:start(
+      30000, -- 30 segundos
+      30000, -- repetir cada 30 segundos
+      vim.schedule_wrap(function()
+        M.save_to_disk()
+      end)
+    )
+  end
+
+  -- Guardar al salir de Neovim
+  vim.api.nvim_create_autocmd("VimLeavePre", {
+    group = vim.api.nvim_create_augroup("RecentFilesSave", { clear = true }),
+    callback = function()
+      M.save_to_disk()
     end,
   })
 end
