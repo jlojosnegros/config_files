@@ -105,6 +105,56 @@ The profile system (lua/profiles/) provides language-specific development workfl
 - Mason for LSP server/tool management
 - External tools: stylua (Lua formatting), lazygit, bazel/cargo (per profile)
 
+### Tmux Configuration
+Tmux is configured with Catppuccin Mocha theme and TPM (Tmux Plugin Manager):
+
+**Key Configuration:**
+- Prefix key: `Ctrl-t` (not default `Ctrl-b`)
+- Config location: `~/.config/tmux/tmux.conf` (deployed via stow)
+- Plugin manager: TPM at `~/.tmux/plugins/tpm`
+- Theme: Catppuccin v2.1.3 (Mocha flavor) with custom pane/window styling
+- Clipboard integration: Uses `xsel` for copy operations
+
+**Core Keybindings:**
+- `Ctrl-t Ctrl-t`: Switch to last window
+- `Ctrl-t h/j/k/l`: Navigate panes (vim-style)
+- `Ctrl-t H/J/K/L`: Resize panes
+- `Ctrl-t |`: Split horizontal (keeps current path)
+- `Ctrl-t -`: Split vertical (keeps current path)
+- `Ctrl-t c`: New window (keeps current path)
+- `Ctrl-t b`: Break pane to new window
+- `Ctrl-t a`: Join pane from another window
+- `Ctrl-t S`: Send pane to window number
+- `Ctrl-t @`: Rename pane title
+- `Ctrl-t g`: Move window from another session
+- `Ctrl-t G`: Link window from another session
+- `Ctrl-t N`: Create new session
+- `Ctrl-t r`: Reload config
+
+**Plugin Setup:**
+After initial stow deployment, install TPM and plugins:
+```bash
+# Install TPM
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# Inside tmux, press: Ctrl-t I (capital i) to install plugins
+```
+
+**Active Plugins:**
+- catppuccin/tmux - Theme with custom status modules
+- tmux-battery - Battery status indicator
+- tmux-cpu - CPU usage indicator
+- tmux-yank - Clipboard integration
+
+**Status Bar Modules:**
+Status bar (top position) shows: Application | CPU | Session | Uptime | Battery
+
+**Copy Mode:**
+- Vim keybindings enabled (`mode-keys vi`)
+- Mouse selection auto-copies to clipboard via `xsel`
+- Enter in copy mode: Copy and exit
+- Mouse drag: Select and auto-copy on release
+
 ### Shell Environment
 Zsh configuration includes:
 - Zinit plugin manager for performance
@@ -128,6 +178,22 @@ stow -v -d /home/jojosneg/source/mine/config_files/ -t /home/jojosneg/.config/tm
 
 # Test deployment (dry-run)
 stow -n -v -d /home/jojosneg/source/mine/config_files/ -t /home/jojosneg/.config/nvim nvim_nvchad
+```
+
+### Tmux Setup
+```bash
+# Deploy configuration
+stow -v -d /home/jojosneg/source/mine/config_files/ -t /home/jojosneg/.config/tmux tmux
+
+# Install TPM (Tmux Plugin Manager)
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# Start tmux and install plugins
+tmux
+# Then press: Ctrl-t I (capital I) to install plugins
+
+# Reload tmux config (from within tmux)
+# Press: Ctrl-t r
 ```
 
 ### NvChad Configuration
