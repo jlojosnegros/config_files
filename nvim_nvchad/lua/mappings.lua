@@ -51,6 +51,9 @@ map("n", "<leader>fr", tb("lsp_references"),        opt("LSP Referencias"))
 map("n", "<leader>fs", tb("lsp_document_symbols"),  opt("Símbolos del buffer"))
 map("n", "<leader>fS", tb("lsp_workspace_symbols"), opt("Símbolos del workspace"))
 
+-- Buffer list (alternativa a <leader>fb de NvChad)
+map("n", "<leader>bl", tb("buffers"), opt("Lista buffers (Telescope)"))
+
 -- ========= Git (Telescope + Gitsigns) =========
 map("n", "<leader>gs", tb("git_status"),   opt("Git status (Telescope)"))
 map("n", "<leader>gc", tb("git_commits"),  opt("Commits (Telescope)"))
