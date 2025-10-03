@@ -96,3 +96,19 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "CursorHold", "InsertLeave" }, {
     vim.wo.winbar = "%#WinBar#" .. location .. "%#WinBarPath#" .. file_path .. modified
   end,
 })
+
+-- Filetype associations
+-- Tratar archivos Containerfile como Dockerfile
+vim.filetype.add({
+  extension = {
+    Containerfile = "dockerfile",
+  },
+  filename = {
+    ["Containerfile"] = "dockerfile",
+    ["Containerfile.dev"] = "dockerfile",
+    ["Containerfile.prod"] = "dockerfile",
+  },
+  pattern = {
+    [".*%.Containerfile"] = "dockerfile",
+  },
+})
